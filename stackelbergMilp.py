@@ -1,5 +1,4 @@
 import numpy as np
-from scipy import constants
 from decisionRule import DecisionRule
 from problem import PROBLEM
 import sys
