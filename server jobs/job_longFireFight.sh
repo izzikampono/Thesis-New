@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=50
+#SBATCH --cpus-per-task=20
 #SBATCH --time=08:00:00
 #SBATCH --error=error_file_longFireFight.txt
 #SBATCH --job-name=longFireFight_"$2"
-#SBATCH --mem=50G
+#SBATCH --mem=20G
 #SBATCH --output=output_longFireFight.log
 
 module purge

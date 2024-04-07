@@ -6,6 +6,8 @@ from beliefState import BeliefState
 from problem import PROBLEM
 PROBLEM = PROBLEM.get_instance()
 import utilities
+from typing import Union
+
 
 
 class BeliefSpace:
@@ -66,7 +68,7 @@ class BeliefSpace:
         min_magnitude = np.linalg.norm(min_belief.value-belief.value)
         return min_magnitude > self.density
     
-    def get_closest_belief(self,belief) -> BeliefState|None:
+    def get_closest_belief(self,belief) -> Union[BeliefState,None]:
         """ returns a stored belief and belief_id in the belief space that is closest in distance to the input belief """
         if not self.distance(belief) :
 
