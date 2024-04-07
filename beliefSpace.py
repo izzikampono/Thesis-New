@@ -117,7 +117,7 @@ class BeliefSpace:
         self.network = {}
         return self
     
-    def existing_next_belief_id(self,current_belief_id,joint_action,joint_observation) -> int|None:
+    def existing_next_belief_id(self,current_belief_id,joint_action,joint_observation) -> Union[int,None]:
         """function to retrieve an existing network connection from belief_id to next_belief_id using an action,observation key"""
         # check if there is a connection with the (u,z) branch and check if Pr(z|b,u)>0
         if self.check_network_connection(current_belief_id,joint_action,joint_observation) and utilities.observation_probability(joint_observation, self.get_belief(current_belief_id),joint_action)>0:
