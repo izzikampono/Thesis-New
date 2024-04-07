@@ -156,10 +156,10 @@ class Experiment():
         
         
     
-    def run_experiment_decreasing_density(self):
+    def run_experiment_decreasing_density(self,starting_density):
         """run experiments for all benchmarks of a fixed problem with decreasing densities at each iterations (all gametypes and sota mode)"""
         
-        densities = exponential_decrease(0.4,0.0001,self.iterations)
+        densities = exponential_decrease(starting_density,0.0001,self.iterations)
         
         for gametype in ["cooperative","zerosum","stackelberg"]:
             for sota in [False,True]:
@@ -169,7 +169,7 @@ class Experiment():
                     # add results to database
                     self.add_to_database(gametype,horizon,sota,self.iterations,times,belief_sizes,max_plane_values,tabular_values,densities)
                 # save the alpha vector at the initial belief state (will be used to get the policy or get the value of the game )
-                self.policies[gametype][sota] = self.game.value_function.vector_sets[0][0]
+                self.policies[gametype][sota] = self.game.value_function.get_alpha_pairs(0,0)
         # construct stackelberg comparison matrix and export 
         self.construct_stackelberg_comparison_matrix()
         # save databse as a csv file
@@ -185,7 +185,7 @@ class Experiment():
         """
         algorithms = ['State of the Art','PBVI']
         # create columns for each algorithm
-        columns = pd.MultiIndex.from_product([algorithms, ['time', 'value', 'iteration']])
+        columns = pd.MultiIndex.from_product([algorithms, ['time', 'leader value', 'iteration']])
        
        #initialize tables 
         tables = dict.fromkeys(["cooperative","zerosum","stackelberg"])
@@ -198,9 +198,9 @@ class Experiment():
                 new_row_data = []
                 for SOTA in ["State of the Art","Stackelberg"]:
                     # get the data of the current benchmark
-                    current_data = self.database[self.database["SOTA"]==SOTA][self.database["horizon"]==horizon+1][self.database["gametype"]==gametype]
+                    current_data = self.database[(self.database["SOTA"]==SOTA)&(self.database["horizon"]==horizon+1)&(self.database["gametype"]==gametype)]
                     time = current_data["time"].values[0][self.iterations-1]
-                    value = current_data["values"].values[0][self.iterations-1]
+                    value = current_data["leader values"].values[0][self.iterations-1]
                     iteration = current_data["iterations"].values[0]
                     # aggregate data together
                     new_row_data = new_row_data + [time,value,iteration]
@@ -221,11 +221,11 @@ class Experiment():
         colors = ['blue', 'red']
         line_widths = [2.0, 1.5]
         for idx,gametype in enumerate(["cooperative","stackelberg","zerosum"]):
-            data = self.database[self.database["gametype"]==gametype][self.database["horizon"]==self.planning_horizon]
+            data = self.database[(self.database["gametype"]==gametype) & (self.database["horizon"]==self.planning_horizon)]
             x = [i+1 for i in range(0,self.iterations)]
             for color_idx,sota in enumerate(["Stackelberg","State of the Art"]):
-                y = [value[0] for value in  data["values"][data["SOTA"]=="Stackelberg"].to_numpy()[0]]
-                axs[idx].plot(x,y,label = sota,color=colors[color_idx],linewidth=line_widths[color_idx])
+                y = [value for value in  data["leader values"][data["SOTA"]=="Stackelberg"].to_numpy()[0]]
+                axs[idx].plot(x,y,linestyle="--",label = sota,color=colors[color_idx],linewidth=line_widths[color_idx])
                 axs[idx].set_xlabel("Iterations")
                 axs[idx].set_ylabel("leader value")
                 axs[idx].set_title(f"{gametype} game") 
@@ -235,7 +235,7 @@ class Experiment():
         plt.legend()
         plt.savefig(f"plots/{PROBLEM.NAME} ({self.planning_horizon}).png")
         plt.show(block=False)
-        plt.close('all')
+       
 
 
      
