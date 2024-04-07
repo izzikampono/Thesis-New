@@ -17,7 +17,7 @@ if len(sys.argv)> 3 :
     file_name = str(sys.argv[1]).split("=")[1]
     planning_horizon = int(sys.argv[2].split("=")[1])
     num_iterations = int(sys.argv[3].split("=")[1])
-if len(sys.argv)> 4 :
+elif len(sys.argv)> 4 :
     file_name = str(sys.argv[1]).split("=")[1]
     planning_horizon = int(sys.argv[2].split("=")[1])
     num_iterations = int(sys.argv[3].split("=")[1])
