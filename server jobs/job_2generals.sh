@@ -24,7 +24,7 @@ cplex quit
 cplex -c set threads 0
 
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
-cd /scratch/s3918343/venvs/thesis/Thesis
+cd /scratch/s3918343/venvs/thesis/Thesis-New
 echo "Run problem : $1 with horizon: $2 and iter : $3"
 python experiment_script.py problem=$1 horizon=$2 iter=$3
 echo " SOLVING DONE"

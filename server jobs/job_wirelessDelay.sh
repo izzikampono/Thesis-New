@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=80
-#SBATCH --time=02:00:00
-#SBATCH --error=error_file_relay4.txt
-#SBATCH --job-name=Mars
-#SBATCH --mem=60G
-#SBATCH --output=output_relay4.log
+#SBATCH --cpus-per-task=50
+#SBATCH --time=03:00:00
+#SBATCH --error=error_file_wirelessDelay.txt
+#SBATCH --job-name=wirelessDelay
+#SBATCH --mem=50G
+#SBATCH --output=output_wirelessDelay.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0
@@ -22,14 +22,10 @@ module load CPLEX/22.1.1-GCCcore-11.2.0
 cplex -c set parallel -1
 cplex quit
 cplex -c set threads 0
-cplex quit
+
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
-
+cd /scratch/s3918343/venvs/thesis/Thesis-New
 echo "Run problem : $1 with horizon: $2 and iter : $3"
-
-
-cd /scratch/s3918343/venvs/thesis/Thesis
-
 python experiment_script.py problem=$1 horizon=$2 iter=$3
 echo " SOLVING DONE"
 

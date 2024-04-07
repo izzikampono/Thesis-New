@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=80
+#SBATCH --cpus-per-task=50
 #SBATCH --time=03:00:00
-#SBATCH --error=error_file_boxPushing.txt
-#SBATCH --job-name=boxPushing
-#SBATCH --mem=70G
-#SBATCH --output=output_boxPushing.log
+#SBATCH --error=error_file_recycling.txt
+#SBATCH --job-name=recycling
+#SBATCH --mem=50G
+#SBATCH --output=output_recycling.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0
@@ -24,7 +24,7 @@ cplex quit
 cplex -c set threads 0
 
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
-cd /scratch/s3918343/venvs/thesis/Thesis
+cd /scratch/s3918343/venvs/thesis/Thesis-New
 echo "Run problem : $1 with horizon: $2 and iter : $3"
 python experiment_script.py problem=$1 horizon=$2 iter=$3
 echo " SOLVING DONE"
