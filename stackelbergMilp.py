@@ -1,4 +1,3 @@
-from colorama import init
 import numpy as np
 from scipy import constants
 from decisionRule import DecisionRule
