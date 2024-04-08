@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=50
-#SBATCH --time=02:00:00
+#SBATCH --time=06:00:00
 #SBATCH --error=error_file_relay4.txt
 #SBATCH --job-name=relay4
 #SBATCH --mem=60G
@@ -20,7 +20,6 @@ source /scratch/s3918343/venvs/thesis/bin/activate
 echo : "initialized python evironment"
 module load CPLEX/22.1.1-GCCcore-11.2.0
 cplex -c set parallel -1
-cplex quit
 cplex -c set threads 0
 cplex quit
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
