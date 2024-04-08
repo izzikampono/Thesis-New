@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=10
-#SBATCH --time=12:00:00
-#SBATCH --error=error_file_longFireFight.txt
-#SBATCH --job-name=longFireFight_"$2"
+#SBATCH --cpus-per-task=50
+#SBATCH --time=09:00:00
+#SBATCH --error=error_fireFighting_2_3_3.txt
+#SBATCH --job-name=2generals
 #SBATCH --mem=30G
-#SBATCH --output=output_longFireFight.log
+#SBATCH --output=output_fireFighting_2_3_3.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0

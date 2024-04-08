@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=50
-#SBATCH --time=06:00:00
+#SBATCH --cpus-per-task=40
+#SBATCH --time=08:00:00
 #SBATCH --error=error_file_wirelessDelay.txt
 #SBATCH --job-name=wirelessDelay
-#SBATCH --mem=50G
+#SBATCH --mem=20G
 #SBATCH --output=output_wirelessDelay.log
 
 module purge

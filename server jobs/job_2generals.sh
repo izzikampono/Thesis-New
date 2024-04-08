@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=50
-#SBATCH --time=06:00:00
+#SBATCH --time=09:00:00
 #SBATCH --error=error_file_2generals.txt
 #SBATCH --job-name=2generals
 #SBATCH --mem=30G

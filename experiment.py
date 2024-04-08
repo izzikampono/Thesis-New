@@ -159,7 +159,7 @@ class Experiment():
     def run_experiment_decreasing_density(self,starting_density):
         """run experiments for all benchmarks of a fixed problem with decreasing densities at each iterations (all gametypes and sota mode)"""
         
-        densities = exponential_decrease(starting_density,0.0001,self.iterations)
+        densities = exponential_decrease(starting_density,0.00001,self.iterations)
         
         for gametype in ["cooperative","zerosum","stackelberg"]:
             for sota in [False,True]:

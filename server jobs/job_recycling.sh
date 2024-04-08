@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=30
-#SBATCH --time=05:00:00
+#SBATCH --time=12:00:00
 #SBATCH --error=error_file_recycling.txt
 #SBATCH --job-name=recycling
 #SBATCH --mem=30G

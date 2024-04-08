@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=20
-#SBATCH --time=05:00:00
+#SBATCH --time=12:00:00
 #SBATCH --error=error_file_relay4.txt
 #SBATCH --job-name=Mars
 #SBATCH --mem=20G

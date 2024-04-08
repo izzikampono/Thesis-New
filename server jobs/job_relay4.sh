@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=50
-#SBATCH --time=06:00:00
+#SBATCH --cpus-per-task=30
+#SBATCH --time=12:00:00
 #SBATCH --error=error_file_relay4.txt
 #SBATCH --job-name=relay4
-#SBATCH --mem=60G
+#SBATCH --mem=30G
 #SBATCH --output=output_relay4.log
 
 module purge
