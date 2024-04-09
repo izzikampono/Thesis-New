@@ -29,7 +29,7 @@ PROBLEM.initialize(DecPOMDP(file_name,horizon=planning_horizon))
 
 #configure experiment and run
 from experiment import Experiment
-experiment = Experiment(planning_horizon,num_iterations,algorithm="maxplane")
+experiment = Experiment(planning_horizon,num_iterations)
 value , time = experiment.run_single_experiment()
 # policy = experiment.game.extract_policy()
 

@@ -28,7 +28,7 @@ echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 echo "Run problem : recyling with horizon: $1 and iter : $2, starting density : $3"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 python -m pip install joblib
-python densities_experiment.py problem=relay4 horizon=$1 iter=$2 density=$3
+python densities_experiment.py problem=wirelessDelay horizon=$1 iter=$2 density=$3
 echo " SOLVING DONE"
 
 deactivate

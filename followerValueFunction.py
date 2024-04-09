@@ -30,6 +30,7 @@ class FollowerValueFunction:
         
     
     def get_vectors_at_timestep(self,timestep) -> list[AlphaVector]:
+        """function to return list of alpha vectors that have been stored in the value function"""
         return self.vector_sets[timestep]
     
      

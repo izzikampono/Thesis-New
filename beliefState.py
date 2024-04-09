@@ -10,7 +10,6 @@ class BeliefState:
         self.id = id
         self.action_label = action_label
         self.observation_label = observation_label
-        self.alpha_vector_solution = None
 
     def set_id(self,id):
         self.id=id
@@ -52,8 +51,10 @@ class BeliefState:
 
         # calculate next belief state with b_next(x') = \sum_{x} += b_current(x) * TRANSITION_MATRIX(u,z,x,x')
         for next_state in PROBLEM.STATES:
+            # initialize b'(x)
             value = 0
             for state in PROBLEM.STATES:
+                # b'(x) += b(x) * dynamics(x,u,y,z)
                 value += self.value[state] * PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state]  * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation]
             next_belief_value[next_state]+=value  
 

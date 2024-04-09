@@ -14,7 +14,7 @@ gc.enable()
 
 # input : file_name , game type  , planning horizon, num iterations,sota(1 or 0)
 # sample code  : 
-# python experiment_script.py problem=dectiger horizon=2 iter=2  density=0.001
+# python densities_experiment.py problem=dectiger horizon=2 iter=2  density=0.2
 if len(sys.argv) < 2:
     print("err0r : not enough arguments given")
     sys.exit(1)
@@ -34,7 +34,8 @@ PROBLEM.initialize(DecPOMDP(file_name,horizon=planning_horizon))
 
 #configure experiment and run
 from experiment import Experiment
-experiment = Experiment(planning_horizon,num_iterations,algorithm="maxplane")
+experiment = Experiment(planning_horizon,num_iterations)
 experiment.run_experiment_decreasing_density(starting_density)
 experiment.generate_summary_table()
+experiment.horizon_value_plot()
 experiment.plots()

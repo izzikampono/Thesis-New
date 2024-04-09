@@ -28,9 +28,10 @@ PROBLEM.initialize(DecPOMDP(file_name,horizon=planning_horizon))
 
 #configure experiment and run
 from experiment import Experiment
-experiment = Experiment(planning_horizon,num_iterations,algorithm="maxplane")
+experiment = Experiment(planning_horizon,num_iterations)
 experiment.run_experiments()
 experiment.generate_summary_table()
+experiment.horizon_value_plot()
 experiment.plots()
 
 

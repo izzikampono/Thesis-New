@@ -11,10 +11,9 @@ from utilities import *
 PROBLEM = PROBLEM.get_instance()
 
 class Experiment():
-    def __init__(self,horizon,iterations, algorithm) -> None:
+    def __init__(self,horizon,iterations) -> None:
         self.planning_horizon = horizon
         self.iterations = iterations
-        self.algorithm = algorithm #tabular or max_plane
         self.game = None
         self.policies = {"cooperative" : {},"zerosum" : {},"stackelberg" : {}}
         self.database = self.initialize_database()
@@ -58,10 +57,11 @@ class Experiment():
         self.database["density"].append(density)
         return
     
-    def export_database(self):
+    def export_database(self,experiment_type="normal"):
         """function to save the results of the experiment as a csv file"""
         if type(self.database)!=pd.DataFrame : self.database = pd.DataFrame(self.database)
-        self.database.to_csv(f"raw_results/{PROBLEM.GAME.name} ({self.planning_horizon}).csv", index=False)
+        if experiment_type=="normal":self.database.to_csv(f"raw_results/{PROBLEM.GAME.name} ({self.planning_horizon}).csv", index=False)
+        else : self.database.to_csv(f"density_experiment_raw_results/{PROBLEM.GAME.name} ({self.planning_horizon}).csv", index=False)
 
     def construct_stackelberg_comparison_matrix(self):
         """function to create the general-sum game comparison matrix that shows the performance of the SOTA trained agents against the Stackelberg trained agents """
@@ -69,8 +69,6 @@ class Experiment():
         # initialize stackelberg comparison matrix 
         print("Constructing Stackelberg Comparison matrix..")
         # self.game.value_function.print_initial_vector()
-
-
         matrix = {"Strong Leader" : {"Strong Follower" : None , "Blind Follower" : None},"Weak Leader" : {"Strong Follower" : None, "Blind Follower" : None }}
         # populate with values of evaluated policies
         matrix["Strong Leader"]["Strong Follower"] =  self.policies["stackelberg"][False].get_value(self.game.belief_space.initial_belief)
@@ -119,10 +117,11 @@ class Experiment():
         tabular_values = []
         times = []
         belief_sizes = []
-        print(f"\t\t\t Solving {gametype} {PROBLEM.NAME} GAME Horizon {horizon} WITH SOTA = {self.game.sota}  ")
 
         #initialize game with gametype and sota 
         self.initialize_game(horizon,1,gametype,sota)
+        print(f"\t\t\t Solving {gametype} {PROBLEM.NAME} GAME Horizon {horizon} WITH SOTA = {self.game.sota}  ")
+
         for iter in range(1,self.iterations+1):
             print(f"iteration : {iter}")
             self.game.reset()
@@ -135,7 +134,7 @@ class Experiment():
         # extract policy from the last iteration
         return max_plane_values,tabular_values,times,belief_sizes
     
-    def run_experiments(self,density=0.000001):
+    def run_experiments(self,density=0.0001):
         """run experiments for all benchmarks of a fixed problem (solves for all gametypes and SOTA mode)"""
         
         for gametype in ["cooperative","zerosum","stackelberg"]:
@@ -159,7 +158,7 @@ class Experiment():
     def run_experiment_decreasing_density(self,starting_density):
         """run experiments for all benchmarks of a fixed problem with decreasing densities at each iterations (all gametypes and sota mode)"""
         
-        densities = exponential_decrease(starting_density,0.00001,self.iterations)
+        densities = exponential_decrease(starting_density,0.001,self.iterations)
         
         for gametype in ["cooperative","zerosum","stackelberg"]:
             for sota in [False,True]:
@@ -173,7 +172,7 @@ class Experiment():
         # construct stackelberg comparison matrix and export 
         self.construct_stackelberg_comparison_matrix()
         # save databse as a csv file
-        self.export_database()
+        self.export_database(experiment_type="densities")
         return self.database
         
         pass
@@ -248,14 +247,16 @@ class Experiment():
             sota_values = []
             non_sota_values = []
             x_labels = []
+            colors = ['blue', 'red']
+
             for horizon in range(1,self.planning_horizon+1):
-                data = self.database[self.database["gametype"]==gametype][self.database["horizon"]==horizon]
-                sota_values.append(np.average([values[0] for values in np.array(data["values"][data["SOTA"]=="State of the Art"])[0]]))
-                non_sota_values.append(np.average([values[0] for values in np.array(data["values"][data["SOTA"]=="Stackelberg"])[0]]))
+                data = self.database[(self.database["gametype"]==gametype) & (self.database["horizon"]==self.planning_horizon)]
+                sota_values.append(np.average([values for values in np.array(data["leader values"][data["SOTA"]=="State of the Art"])[0]]))
+                non_sota_values.append(np.average([values for values in np.array(data["leader values"][data["SOTA"]=="Stackelberg"])[0]]))
                 x_labels.append(horizon)
             # plotting
-            axs[id].bar(horizons, sota_values, bar_width, label='Stackelberg')
-            axs[id].bar(horizons + bar_width, non_sota_values, bar_width, label='State of the art')
+            axs[id].bar(horizons, sota_values, bar_width, label='Stackelberg',color=colors[0])
+            axs[id].bar(horizons + bar_width, non_sota_values, bar_width, label='State of the art',color=colors[1])
 
             # labels
             axs[id].set_xlabel("Horizon")
@@ -267,7 +268,7 @@ class Experiment():
         fig.suptitle(f"Results for {PROBLEM.NAME}")
         plt.legend()
         plt.tight_layout()
-        plt.savefig(f"horizon_plot/{PROBLEM.NAME} ({self.planning_horizon}).png")
+        plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({self.planning_horizon}).png")
         plt.show(block=False)
         plt.pause(8)
         plt.close('all')

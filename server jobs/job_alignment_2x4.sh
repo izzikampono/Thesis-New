@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=50
-#SBATCH --time=09:00:00
+#SBATCH --cpus-per-task=60
+#SBATCH --time=30:00:00
 #SBATCH --error=error_file_alignment_2x4.txt
 #SBATCH --job-name=2generals
 #SBATCH --mem=40G
@@ -12,7 +12,7 @@ module load Python/3.9.6-GCCcore-11.2.0
 
 
 # Check if at least one argument is provided
-if [ $# -lt 3 ]; then
+if [ $# -lt 2 ]; then
     echo "Usage: $0 <problem> [<horizon>] [num_iter]"
     exit 1
 fi
