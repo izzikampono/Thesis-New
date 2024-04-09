@@ -12,7 +12,7 @@ module load Python/3.9.6-GCCcore-11.2.0
 
 
 # Check if at least one argument is provided
-if [ $# -lt 3 ]; then
+if [ $# -lt 2 ]; then
     echo "Usage: $0 <problem> [<horizon>] [num_iter]"
     exit 1
 fi

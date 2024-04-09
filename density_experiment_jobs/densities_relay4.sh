@@ -2,17 +2,17 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=50
 #SBATCH --time=24:00:00
-#SBATCH --error=error_file_relay4.txt
+#SBATCH --error=error_file_relay4_densities.txt
 #SBATCH --job-name=relay4
 #SBATCH --mem=40G
-#SBATCH --output=output_relay4.log
+#SBATCH --output=output_relay4_densities.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0
 
 
 # Check if at least one argument is provided
-if [ $# -lt 3 ]; then
+if [ $# -lt 2 ]; then
     echo "Usage: $0 <problem> [<horizon>] [num_iter]"
     exit 1
 fi
@@ -25,7 +25,7 @@ cplex -c set threads 0
 cplex quit
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 
-echo "Run problem : recyling with horizon: $1 and iter : $2, starting density : $3"
+echo "Run problem : relay4 with horizon: $1 and iter : $2, starting density : $3"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 python -m pip install joblib
 python densities_experiment.py problem=relay4 horizon=$1 iter=$2 density=$3
