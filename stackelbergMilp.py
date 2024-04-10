@@ -72,6 +72,23 @@ class MILP:
         # turn deterministic action to a decision rule 
         follower_decision_rule = np.identity(len(PROBLEM.ACTIONS[PROBLEM.FOLLOWER]))[best_follower_action]
         return (follower_decision_rule,max_value)
+    
+    def calculate_follower_DR2(self,leader_decision_rule,state)-> list:
+        milp = Model("follower_action")
+        follower_DR = {}
+        for state in PROBLEM.STATES:
+            follower_DR[state] = self.milp.binary_var_list(len(PROBLEM.ACTIONS[PROBLEM.FOLLOWER]), name = [f"a1_u{i}_x{state}" for i in PROBLEM.ACTIONS[PROBLEM.LEADER]]) # type: ignore
+        
+        for follower_action in PROBLEM.ACTIONS[PROBLEM.FOLLOWER]:
+            value = 0
+            for leader_action in PROBLEM.ACTIONS[PROBLEM.LEADER]:
+                value += leader_decision_rule[leader_action] * self.beta.two_d_vectors[PROBLEM.FOLLOWER][state][PROBLEM.get_joint_action(leader_action,follower_action)]
+            if value > max_value:
+                max_value = value
+                best_follower_action = follower_action
+        # turn deterministic action to a decision rule 
+        follower_decision_rule = np.identity(len(PROBLEM.ACTIONS[PROBLEM.FOLLOWER]))[best_follower_action]
+        return (follower_decision_rule,max_value)
                 
 
 

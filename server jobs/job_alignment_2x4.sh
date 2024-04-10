@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=60
 #SBATCH --time=30:00:00
 #SBATCH --error=error_file_alignment_2x4.txt
-#SBATCH --job-name=2generals
+#SBATCH --job-name=alignment
 #SBATCH --mem=40G
 #SBATCH --output=output_alignment_2x4.log
 
@@ -25,8 +25,8 @@ cplex -c set threads 0
 
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
-echo "Run problem : $1 with horizon: $2 and iter : $3"
-python experiment_script.py problem=$1 horizon=$2 iter=$3
+echo "Run problem : alignment_2x4 with horizon: $1 and iter : $2"
+python experiment_script.py problem=alignment_2x4 horizon=$1 iter=$2
 echo " SOLVING DONE"
 
 deactivate

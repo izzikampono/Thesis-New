@@ -3,3 +3,5 @@
 *.lp
 *.csv
 *.sh
+*.log
+*txt

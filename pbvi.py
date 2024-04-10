@@ -38,12 +38,14 @@ class  PBVI:
         for timestep in range(self.horizon-1,-1,-1):
             print(f"\n========== Backup at timestep {timestep} ==========")
             # loop through all beliefs at a given timestep
+            n = 0
             for belief_id in self.belief_space.time_index_table[timestep]:
                 self.value_function.backup(belief_id,timestep)
-
+                print(f"\t\tbelief id : {belief_id} - {n} / {len(self.belief_space.time_index_table[timestep])} ")
+                n+=1
             
-            for belief_id in self.belief_space.time_index_table[timestep]:
-                self.value_function.verify(belief_id,timestep)
+            # for belief_id in self.belief_space.time_index_table[timestep]:
+            #     self.value_function.verify(belief_id,timestep)
 
         # terminal result printing
         leader_value , follower_value = self.value_function.get_initial_value()

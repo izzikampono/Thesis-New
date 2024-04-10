@@ -2,10 +2,10 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=50
 #SBATCH --time=30:00:00
-#SBATCH --error=error_file_relay4.txt
+#SBATCH --error=error_file_mars.txt
 #SBATCH --job-name=Mars
 #SBATCH --mem=20G
-#SBATCH --output=output_relay4.log
+#SBATCH --output=output_mars.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0
