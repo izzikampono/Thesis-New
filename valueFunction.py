@@ -36,7 +36,7 @@ class ValueFunction:
         return JointAlphaVector(self.leader_value_fn.get_vector_at_belief(belief_id,timestep),self.folower_value_fn.get_vector_at_belief(belief_id,timestep),belief_id)
     
     
-    def solve(self,belief_id,timestep) -> tuple[JointAlphaVector,JointAlphaVector]:
+    def solve(self,belief_id,timestep) -> tuple[AlphaVector,AlphaVector]:
         """solve function that solves a subgame at each belief point in the tree by creating beta vectors and using a Mixed integer linear program to solve for the optimal decision rule"""
         
         # construct beta vectors
@@ -56,21 +56,4 @@ class ValueFunction:
         self.leader_value_fn.add_alpha_vector(leader_alpha,timestep)
         self.folower_value_fn.add_alpha_vector(follower_alpha,timestep)
 
-    def verify(self,belief_id,timestep):
-        """funcion that is called after the backup of all belief states at a certain timestep in order to verify if the backup resulted in consistent values between the max_plane and tabular algorithms.
-           the function prints out details in the terminal if there are any inconsistencies found.
-        """
-
-        # get current belief state, and its corresponding tabular and maxplane values
-        belief = self.belief_space.get_belief(belief_id)
-        beta_vector = BetaVector(self.leader_value_fn.construct_beta(belief_id,timestep),self.folower_value_fn.construct_beta(belief_id,timestep))
-
-        leader_alpha = self.leader_value_fn.get_vector_at_belief(belief_id,timestep)
-        follower_alpha = self.folower_value_fn.get_vector_at_belief(belief_id,timestep)
-        print(f"\t\tbelief: {belief_id} = {belief.value} , \tleader value: {leader_alpha.get_value(belief)}, \tfollower value (by state):  {follower_alpha.vector}")
-        
-        # print(f"\n\t\t beta vectors : ")
-        # for state in PROBLEM.STATES:
-        #     for joint_action in PROBLEM.JOINT_ACTIONS:
-        #         print(f"\t\t\tbeta({state},{joint_action})\tleader = {beta_vector.two_d_vectors[PROBLEM.LEADER][state][joint_action]}\t follower = {beta_vector.two_d_vectors[PROBLEM.FOLLOWER][state][joint_action]}")
-      
+ 

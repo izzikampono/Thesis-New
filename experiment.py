@@ -65,17 +65,18 @@ class Experiment():
 
     def construct_stackelberg_comparison_matrix(self):
         """function to create the general-sum game comparison matrix that shows the performance of the SOTA trained agents against the Stackelberg trained agents """
-        
-        # initialize stackelberg comparison matrix 
         print("Constructing Stackelberg Comparison matrix..")
-        # self.game.value_function.print_initial_vector()
+
+        # initialize stackelberg comparison matrix 
         matrix = {"Strong Leader" : {"Strong Follower" : None , "Blind Follower" : None},"Weak Leader" : {"Strong Follower" : None, "Blind Follower" : None }}
+        
         # populate with values of evaluated policies
         matrix["Strong Leader"]["Strong Follower"] =  self.policies["stackelberg"][False].get_value(self.game.belief_space.initial_belief)
         matrix["Strong Leader"]["Blind Follower"] = self.game.evaluate(0,0,self.policies["stackelberg"][False].get_leader_vector(),self.policies["stackelberg"][True].get_follower_vector())
         matrix["Weak Leader"]["Blind Follower"] = self.policies["stackelberg"][True].get_value(self.game.belief_space.initial_belief)
         matrix["Weak Leader"]["Strong Follower"] = self.game.evaluate(0,0,self.policies["stackelberg"][True].get_leader_vector(),self.policies["stackelberg"][False].get_follower_vector())
         print("Done.. exporting to csv..")
+        
         # convert to dataframe and export to csv file
         matrix = pd.DataFrame(matrix)
         matrix.to_csv(f"comparison_matrix/{PROBLEM.NAME}({self.planning_horizon}).csv", index=False)        
@@ -134,7 +135,7 @@ class Experiment():
         # extract policy from the last iteration
         return max_plane_values,tabular_values,times,belief_sizes
     
-    def run_experiments(self,density=0.0001):
+    def run_experiments(self,density=0.00001):
         """run experiments for all benchmarks of a fixed problem (solves for all gametypes and SOTA mode)"""
         
         for gametype in ["cooperative","zerosum","stackelberg"]:
@@ -176,13 +177,43 @@ class Experiment():
         return self.database
         
         pass
+    
+    def generate_comparison_tables(self):
+        """function that generates a concise table summarizing the results of all gametypes.
+            The table highlights the difference of solving each gametype using 2 different solve methods : stackelberg or state of the art
+        """
+         
+        gametypes = ["cooperative","zerosum","general-sum"]
+        # create columns for each gametype with subcolumns : 
+        columns = pd.MultiIndex.from_product([gametypes, ["State of the Art Leader Value", 'Stackelberg Leader Value']])
+        dataframe = pd.DataFrame(columns=columns)
+
+        game_data = []
+        for horizon in range(self.planning_horizon):
+            new_row_data = []
+            for gametype in ["cooperative","zerosum","stackelberg"]:
+                # get the data of the current benchmark
+                current_data = self.database[(self.database["SOTA"]=="Stackelberg")&(self.database["horizon"]==horizon+1)&(self.database["gametype"]==gametype)]
+                stackelberg_value = current_data["leader values"].values[0][self.iterations-1]
+                current_data = self.database[(self.database["SOTA"]=="State of the Art")&(self.database["horizon"]==horizon+1)&(self.database["gametype"]==gametype)]
+                SOTA_value = current_data["leader values"].values[0][self.iterations-1]
+                # aggregate data together
+                new_row_data = new_row_data + [stackelberg_value,SOTA_value]
+            game_data.append(new_row_data)
+            # populate dataframe with data 
+            dataframe = dataframe.merge(pd.DataFrame(game_data, columns=columns), how='outer')
+        # set indexes of dataframe
+        dataframe.index = [f"{PROBLEM.NAME}({horizon})" for horizon in range(1,self.planning_horizon+1)]
+        #export dataframe to csv file
+        dataframe.to_csv(f"comparison_table/{PROBLEM.NAME}_{self.planning_horizon}.csv",index=True)
+        return dataframe        
 
 
     def generate_summary_table(self):
         """function that generates a concise table summarizing the results of the experiments.
             uses data stored in self.database 
         """
-        algorithms = ['State of the Art','PBVI']
+        algorithms = ['State of the Art','Stackelberg']
         # create columns for each algorithm
         columns = pd.MultiIndex.from_product([algorithms, ['time', 'leader value', 'iteration']])
        
@@ -192,7 +223,7 @@ class Experiment():
         for gametype in ["cooperative","zerosum","stackelberg"]:
             game_data = []
             # for each gametype, create an empty DataFrame using the premade columns
-            df = pd.DataFrame(columns=columns)
+            dataframe = pd.DataFrame(columns=columns)
             for horizon in range(self.planning_horizon):
                 new_row_data = []
                 for SOTA in ["State of the Art","Stackelberg"]:
@@ -205,12 +236,12 @@ class Experiment():
                     new_row_data = new_row_data + [time,value,iteration]
                 game_data.append(new_row_data)
             # populate dataframe with data 
-            df = df.merge(pd.DataFrame(game_data, columns=columns), how='outer')
+            dataframe = dataframe.merge(pd.DataFrame(game_data, columns=columns), how='outer')
             # set indexes of dataframe
-            df.index = [f"{PROBLEM.NAME}({horizon})" for horizon in range(self.planning_horizon)]
+            dataframe.index = [f"{PROBLEM.NAME}({horizon})" for horizon in range(1,self.planning_horizon+1)]
             #export dataframe to csv file
-            df.to_csv(f"processed_results/{gametype}_{PROBLEM.NAME}.csv",index=True)
-            tables[gametype]=df
+            dataframe.to_csv(f"processed_results/{gametype}_{PROBLEM.NAME}.csv",index=True)
+            tables[gametype]=dataframe
         return tables
 
 

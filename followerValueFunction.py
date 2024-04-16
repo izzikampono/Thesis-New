@@ -5,7 +5,8 @@ from alphaVector import AlphaVector
 from beliefSpace import BeliefSpace
 from utilities import *
 PROBLEM = PROBLEM.get_instance()
-
+import gc
+gc.enable()
 
 
 class FollowerValueFunction:

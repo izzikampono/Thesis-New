@@ -126,7 +126,7 @@ class BeliefSpace:
         return None
     
     def print_belief_table(self):
-        for timestep in range(self.horizon+1):
+        for timestep in range(self.horizon):
             print(f"{timestep} : {self.time_index_table[timestep]} ")
     
     def print_network(self):
@@ -147,13 +147,13 @@ class BeliefSpace:
                     for u in U_joint :
                         for z in Z_joint :
                             if Pr(z|b,u_j)>0 :
-                                b_t+1 = T(b_t,u,z)
-                                if sufficiently_different(b_t+1) : add to belief Space and network
+                                b_t+1 = Transition_fn(b_t,u,z)
+                                if sufficiently_different(b_t+1) : add to b_t+1 to belief Space and network
 
         """
         
         
-        for timestep in range(0,self.horizon+1):
+        for timestep in range(0,self.horizon):
             for current_belief_id in self.time_index_table[timestep]:
                 for joint_action in PROBLEM.JOINT_ACTIONS:
                     for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
@@ -163,9 +163,11 @@ class BeliefSpace:
                         
                             # check if the next belief state's is "sufficiently different"
                             if self.distance(original_next_belief):
+                                # add belief to the belief network and belief bag
                                 self.add_network_connection(current_belief_id,joint_action,joint_observation,self.id)
                                 self.add_new_belief_in_bag(original_next_belief,timestep+1)
-                            # if it is not sufficiently different, we use a stored belief state that is closest in distance to original_next_belief state
+
+                            # if it is not sufficiently different, we use a stored belief state that is closest in distance to original_next_belief 
                             elif len(self.belief_dictionary):
                                 # if there is no existing connection, we add the new connection with the existing belief
                                 if self.check_network_connection(current_belief_id,joint_action,joint_observation)==False:

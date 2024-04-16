@@ -9,7 +9,7 @@ gc.enable()
 
 # input : file_name , game type  , planning horizon, num iterations,sota(1 or 0)
 # sample code  : 
-# python experiment_script.py problem=dectiger horizon=2 iter=1
+# python experiment_script.py problem=dectiger horizon=10 iter=3
 if len(sys.argv) < 2:
     print("err0r : not enough arguments given")
     sys.exit(1)
@@ -29,7 +29,7 @@ PROBLEM.initialize(DecPOMDP(file_name,horizon=planning_horizon))
 #configure experiment and run
 from experiment import Experiment
 experiment = Experiment(planning_horizon,num_iterations)
-experiment.run_experiments()
+experiment.run_experiments(0.001)
 experiment.generate_summary_table()
 experiment.horizon_value_plot()
 experiment.plots()

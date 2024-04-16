@@ -6,7 +6,8 @@ from betaVector import BetaVector
 from problem import PROBLEM
 PROBLEM = PROBLEM.get_instance()
 from utilities import *
-
+import gc
+gc.enable()
 
 
 class LeaderValueFunction:
@@ -20,13 +21,19 @@ class LeaderValueFunction:
 
 
     def initialize_value_function(self):
+        """function that initializes a 2D dictionary to store all alpha vectors.
+           the dictionary entitles "self.vector_sets" stores the alphavecors and is indexable along 2 axis : timestep and belief_id
+        
+        """
         for timestep in range(self.horizon+1):
             self.vector_sets[timestep] = {}
             for belief_id in self.belief_space.time_index_table[timestep]:
                 self.vector_sets[timestep][belief_id] = None
     
     def get_initial_value(self):
-        """function that returns the tabular and max_plane value at timestep 0"""
+        """function that returns the value of the alphavector at timestep 0, when evaluated using the initial belief state b0
+           returns  ::  \sum alpha_0(x) * b_0(x)
+        """
         return self.get_vector_at_belief(0,0).get_value(self.belief_space.get_belief(0))
     
     def get_vectors_at_timestep(self,timestep) -> AlphaVector:

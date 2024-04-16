@@ -1,7 +1,6 @@
 import numpy as np
 from alphaVector import PROBLEM, AlphaVector
 from jointAlphaVector import JointAlphaVector
-from maxPlane import MaxPlaneValueFunction
 from valueFunction import ValueFunction
 from beliefSpace import PROBLEM, BeliefSpace
 from decisionRule import DecisionRule
@@ -9,6 +8,8 @@ from problem import PROBLEM
 import time
 from utilities import *
 PROBLEM = PROBLEM.get_instance()
+import gc
+gc.enable()
 
 class  PBVI:
     """class to represent the instance of a game to be solved using either the maxplane or tabular mode"""
@@ -38,15 +39,12 @@ class  PBVI:
         for timestep in range(self.horizon-1,-1,-1):
             print(f"\n========== Backup at timestep {timestep} ==========")
             # loop through all beliefs at a given timestep
-            n = 0
+            n = 1
             for belief_id in self.belief_space.time_index_table[timestep]:
                 self.value_function.backup(belief_id,timestep)
                 print(f"\t\tbelief id : {belief_id} - {n} / {len(self.belief_space.time_index_table[timestep])} ")
                 n+=1
-            
-            # for belief_id in self.belief_space.time_index_table[timestep]:
-            #     self.value_function.verify(belief_id,timestep)
-
+        
         # terminal result printing
         leader_value , follower_value = self.value_function.get_initial_value()
         print(f"\n\n\n================================================= END OF {self.gametype} GAME WITH SOTA {self.sota} ================================================================")
@@ -100,7 +98,7 @@ class  PBVI:
         
     def evaluate(self,belief_id,timestep,leader_alpha: AlphaVector,follower_alpha:AlphaVector):
         """recursive function to get the values from two seperate individual policies, the function traverses individuals policies in parallel to get a joint value for the game.
-            this function calculates the joint value by simulating a game where the agents follow the prescribed policies from different solve methods (Stackelberg/SOTA)
+            this function calculates the joint value by simulating a game where the agents follow the prescribed policies from different solve methods (Stackelberg/State of the art)
         """
         # edge case of the recursive function
         if  timestep == self.horizon or leader_alpha is None or follower_alpha is None: return (0,0)
@@ -110,13 +108,11 @@ class  PBVI:
         belief = self.belief_space.get_belief(belief_id)
         
         
-
         # get V(b) recursively by \sum_{x} \sum{u_joint} += b(x) * leader_decision_rule(u1) *  follower_decision_rule(u2) + \sum_{z} += Pr(z|b,u_joint) * V(TRANSITION(b,u_joint,z))
         for agent in range(2):
             value = 0
             reward = PROBLEM.REWARDS["stackelberg"][agent]
             for state in PROBLEM.STATES:
-                # print(f"follower_alpha.decision_rule = {follower_alpha.decision_rule} ,leader_alpha.decision_rule = {leader_alpha.decision_rule} ")
                 for follower_action in PROBLEM.ACTIONS[PROBLEM.FOLLOWER]:
                     for leader_action, leader_action_probability in enumerate(leader_alpha.decision_rule):
                         # check if action probabilities are greater than 0
@@ -125,7 +121,9 @@ class  PBVI:
                             # get value of current stage of the game :: value = b(x) * a1(u1) * a2(u2) * reward((u1,u2),x)
                             value += belief.value[state] * leader_alpha.decision_rule[leader_action] * follower_alpha.decision_rule[state][follower_action] * reward[joint_action][state]
                             for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
+
                                 next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation)
+                                
                                 # get value of future stages of the game :: value += Pr(z|b,u) * evaluate(timestep+1,next_b)
                                 if next_belief_id is not None and timestep+1<self.horizon: 
                                     next_alpha_pair = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)

@@ -2,10 +2,10 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=50
 #SBATCH --time=24:00:00
-#SBATCH --error=error_file_boxPushing.txt
+#SBATCH --error=error_file_boxPushing_densities.txt
 #SBATCH --job-name=randomgame
 #SBATCH --mem=25G
-#SBATCH --output=output_boxPushing.log
+#SBATCH --output=output_boxPushing_densities.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0
