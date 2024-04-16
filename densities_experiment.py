@@ -37,5 +37,6 @@ from experiment import Experiment
 experiment = Experiment(planning_horizon,num_iterations)
 experiment.run_experiment_decreasing_density(starting_density)
 experiment.generate_summary_table()
+experiment.generate_comparison_tables()
 experiment.horizon_value_plot()
 experiment.plots()
