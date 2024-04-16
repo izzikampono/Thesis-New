@@ -29,7 +29,7 @@ PROBLEM.initialize(DecPOMDP(file_name,horizon=planning_horizon))
 #configure experiment and run
 from experiment import Experiment
 experiment = Experiment(planning_horizon,num_iterations)
-experiment.run_experiments(0.001)
+experiment.run_experiments(0.01)
 experiment.generate_summary_table()
 experiment.horizon_value_plot()
 experiment.plots()

@@ -9,6 +9,8 @@ from pbvi import PBVI
 import matplotlib.pyplot as plt
 from utilities import *
 PROBLEM = PROBLEM.get_instance()
+import gc
+gc.enable()
 
 class Experiment():
     def __init__(self,horizon,iterations) -> None:

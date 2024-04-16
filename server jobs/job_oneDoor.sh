@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=100
-#SBATCH --time=40:00:00
+#SBATCH --cpus-per-task=150
+#SBATCH --time=50:00:00
 #SBATCH --error=error_file_oneDoor.txt
 #SBATCH --job-name=oneDoor
 #SBATCH --mem=40G

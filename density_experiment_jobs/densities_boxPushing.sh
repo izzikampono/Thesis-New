@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=50
-#SBATCH --time=24:00:00
+#SBATCH --cpus-per-task=100
+#SBATCH --time=45:00:00
 #SBATCH --error=error_file_boxPushing_densities.txt
 #SBATCH --job-name=randomgame
 #SBATCH --mem=25G

@@ -7,6 +7,8 @@ from problem import PROBLEM
 PROBLEM = PROBLEM.get_instance()
 import utilities
 from typing import Union
+import gc
+gc.enable()
 
 
 
@@ -110,7 +112,7 @@ class BeliefSpace:
 
         # initialize time_index_table dictionary that stores beliefs at every timestep as a set (so as to only keep unique ids)
         self.time_index_table = {0:set([0])}
-        for timestep in range(1,self.horizon+2):
+        for timestep in range(1,self.horizon+1):
             self.time_index_table[timestep] = set()
         
         # reset network
@@ -179,6 +181,6 @@ class BeliefSpace:
 
                                 # add closest belief id to belief mapping at current timestep 
                                 self.time_index_table[timestep+1].add(existing_belief_id)
-        print(f"\tbelief expansion done, belief space size = {self.size()}\n")
+        print(f"\tbelief expansion done with density = {self.density} , resulting belief space size = {self.size()}\n")
 
     

@@ -96,7 +96,7 @@ class  PBVI:
         # return policy, value at the initial belief and the time it took to solve the game 
         return values, time.time() - start_time
         
-    def evaluate(self,belief_id,timestep,leader_alpha: AlphaVector,follower_alpha:AlphaVector):
+    def evaluate(self,belief_id,timestep,leader_alpha: AlphaVector,follower_alpha:AlphaVector) -> tuple[float,float]:
         """recursive function to get the values from two seperate individual policies, the function traverses individuals policies in parallel to get a joint value for the game.
             this function calculates the joint value by simulating a game where the agents follow the prescribed policies from different solve methods (Stackelberg/State of the art)
         """
@@ -129,7 +129,6 @@ class  PBVI:
                                     next_alpha_pair = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
                                     value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
             values.append(value)
-        # print(f"policy extraction timestep {timestep} done")
         return values
         
 

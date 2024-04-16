@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=100
+#SBATCH --cpus-per-task=120
 #SBATCH --time=40:00:00
 #SBATCH --error=error_fireFighting_2_3_3.txt
 #SBATCH --job-name=fireFighting_2_3_3
