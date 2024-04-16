@@ -100,5 +100,5 @@ def reconstruct_alpha_vectors(belief_id, beta, optimal_decision_rule) ->tuple[Al
 
 def exponential_decrease(start, stop, num):
     "function to generate exponentially decreasing values to use as the density (hyperparameter) values for the expansion of the  belief space. "
-    values = np.array(0.2,0.1,0.05,0.01,0.005)
+    values = np.linspace(0.15,0.001,num)
     return values
