@@ -5,6 +5,8 @@ from docplex.mp.model import Model
 from problem import PROBLEM
 from stackelbergMilp import MILP
 PROBLEM = PROBLEM.get_instance()  
+import gc
+gc.enable()
 
 """ Module that defines the linear programs and solution methods for the "State of the art" solution of a given game """
 

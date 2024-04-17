@@ -4,7 +4,7 @@
 #SBATCH --time=30:00:00
 #SBATCH --error=error_file_mars.txt
 #SBATCH --job-name=Mars
-#SBATCH --mem=30G
+#SBATCH --mem=50G
 #SBATCH --output=output_mars.log
 
 module purge

@@ -56,6 +56,9 @@ class FollowerValueFunction:
         """
         #initialize beta
         follower_beta = np.zeros((len(PROBLEM.STATES),len(PROBLEM.JOINT_ACTIONS)))
+        # if statement for blind follower agent 
+        if self.sota==True : return self.construct_blind_beta()
+        
         for state in PROBLEM.STATES :
             for joint_action in PROBLEM.JOINT_ACTIONS:
                 # beta(x,u) = reward(x,u)
@@ -72,6 +75,18 @@ class FollowerValueFunction:
                             # beta(x,u) += \sum_{z} \sum_{y} DYNAMICS(u,z,x,y) * next_optimal_alpha(u,z)[y]
                             follower_beta[state][joint_action] += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] * self.vector_sets[timestep+1][next_belief_id].vector[state]
         return follower_beta
+    
+    def construct_blind_beta(self,):
+        """function that constructs the beta vectors of the blind follower.
+           The blind follower only uses the immediate reward from a given state action pair to estimate its value
+        """
+        follower_beta = np.zeros((len(PROBLEM.STATES),len(PROBLEM.JOINT_ACTIONS)))
+        for state in PROBLEM.STATES :
+            for joint_action in PROBLEM.JOINT_ACTIONS:
+                # beta(x,u) = reward(x,u)
+                follower_beta[state][joint_action] = PROBLEM.REWARDS[self.gametype][PROBLEM.FOLLOWER][joint_action][state]
+        return follower_beta
+
 
 
     def add_alpha_vector(self,alpha,timestep):

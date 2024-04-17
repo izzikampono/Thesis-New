@@ -11,6 +11,9 @@ from alphaVector import AlphaVector
 from betaVector import BetaVector
 import sys
 PROBLEM = PROBLEM.get_instance()
+import gc
+gc.enable()
+
 class ValueFunction:
     def __init__(self,belief_space,gametype,sota=False):
         #change this to initialize belief space here
@@ -55,5 +58,5 @@ class ValueFunction:
         leader_alpha,follower_alpha  = self.solve(belief_id,timestep)
         self.leader_value_fn.add_alpha_vector(leader_alpha,timestep)
         self.folower_value_fn.add_alpha_vector(follower_alpha,timestep)
-
+    
  

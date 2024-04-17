@@ -155,7 +155,7 @@ class BeliefSpace:
         """
         
         
-        for timestep in range(0,self.horizon):
+        for timestep in range(0,self.horizon-1):
             for current_belief_id in self.time_index_table[timestep]:
                 for joint_action in PROBLEM.JOINT_ACTIONS:
                     for joint_observation in PROBLEM.JOINT_OBSERVATIONS:

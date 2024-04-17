@@ -81,6 +81,7 @@ class Experiment():
         
         # convert to dataframe and export to csv file
         matrix = pd.DataFrame(matrix)
+        self.comparison_matrix = matrix
         matrix.to_csv(f"comparison_matrix/{PROBLEM.NAME}({self.planning_horizon}).csv", index=False)        
 
 
@@ -124,7 +125,7 @@ class Experiment():
         #initialize game with gametype and sota 
         self.initialize_game(horizon,1,gametype,sota)
         print(f"\t\t\t Solving {gametype} {PROBLEM.NAME} GAME Horizon {horizon} WITH SOTA = {self.game.sota}  ")
-
+        self.game.belief_space.expansion()
         for iter in range(1,self.iterations+1):
             print(f"iteration : {iter}")
             self.game.reset()

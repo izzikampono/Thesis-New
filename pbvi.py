@@ -70,17 +70,6 @@ class  PBVI:
 
 #===== public methods ===============================================================================================
 
-
-    def extract_policy(self):
-        """public function to extract policies of both agents after a game is solved"""
-        print("Extracting Policies..")
-        self.value_function.get_max_alpha(0,0,PROBLEM.LEADER)
-        self.value_function.get_max_alpha(0,0,PROBLEM.FOLLOWER)
-
-        policies = [self.extract_leader_policy(belief_id=0,timestep=0),  self.extract_follower_policy(belief_id=0,timestep=0)]    
-
-        return policies
-    
     def solve_game(self,density=None):
         "solve function that solves 1 iteration of a game using a fixed density"
 
@@ -99,9 +88,25 @@ class  PBVI:
     def evaluate(self,belief_id,timestep,leader_alpha: AlphaVector,follower_alpha:AlphaVector) -> tuple[float,float]:
         """recursive function to get the values from two seperate individual policies, the function traverses individuals policies in parallel to get a joint value for the game.
             this function calculates the joint value by simulating a game where the agents follow the prescribed policies from different solve methods (Stackelberg/State of the art)
+            
+            for agent in [leader,follower]:
+                value = 0
+                for x in X:
+                    for u_2 in U_Follower
+                        for u_1 in U_leader:
+                            if a(u_1) and a(u_2|x) > 0 :
+                                value += b(x) * a1(u1) * a2(u2) * reward((u1,u2),x)
+                                for z in Z:
+                                    next_b = T(b,u,z)
+                                    value += Pr(z|b,u1,u2) * 
+        
+        
+        
+        
+        
         """
         # edge case of the recursive function
-        if  timestep == self.horizon or leader_alpha is None or follower_alpha is None: return (0,0)
+        if  timestep >= self.horizon or leader_alpha is None or follower_alpha is None: return (0,0)
         
         #initialize values list and get belief state corresponding to belief_id
         values = []
@@ -127,7 +132,7 @@ class  PBVI:
                                 # get value of future stages of the game :: value += Pr(z|b,u) * evaluate(timestep+1,next_b)
                                 if next_belief_id is not None and timestep+1<self.horizon: 
                                     next_alpha_pair = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
-                                    value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
+                                    value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(next_belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
             values.append(value)
         return values
         
