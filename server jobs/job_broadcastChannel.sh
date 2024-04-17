@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=100
-#SBATCH --time=40:00:00
+#SBATCH --cpus-per-task=120
+#SBATCH --time=65:00:00
 #SBATCH --error=error_file_broadcastChannel.txt
 #SBATCH --job-name=broadcastChannel
 #SBATCH --mem=30G
