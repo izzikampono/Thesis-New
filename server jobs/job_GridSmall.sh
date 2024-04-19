@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=125
-#SBATCH --time=50:00:00
+#SBATCH --time=60:00:00
 #SBATCH --error=error_file_GridSmall.txt
 #SBATCH --job-name=GridSmall
 #SBATCH --mem=50G

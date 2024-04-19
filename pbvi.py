@@ -89,17 +89,21 @@ class  PBVI:
         """recursive function to get the values from two seperate individual policies, the function traverses individuals policies in parallel to get a joint value for the game.
             this function calculates the joint value by simulating a game where the agents follow the prescribed policies from different solve methods (Stackelberg/State of the art)
             
+            values = (0,0)
             for agent in [leader,follower]:
                 value = 0
                 for x in X:
                     for u_2 in U_Follower
                         for u_1 in U_leader:
-                            if a(u_1) and a(u_2|x) > 0 :
+                            if a(u_1)>0 and a(u_2|x) > 0 :
                                 value += b(x) * a1(u1) * a2(u2) * reward((u1,u2),x)
                                 for z in Z:
                                     next_b = T(b,u,z)
-                                    value += Pr(z|b,u1,u2) * 
-        
+                                    next_alpha_vectors = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
+                                    value += Pr(z|b,u1,u2) * evaluate(next_b,timestep+1,next_alpha_vectors.leader,next_alpha_vectors.follower)
+                values.append(value)
+
+            return values
         
         
         
@@ -118,10 +122,11 @@ class  PBVI:
             value = 0
             reward = PROBLEM.REWARDS["stackelberg"][agent]
             for state in PROBLEM.STATES:
-                for follower_action in PROBLEM.ACTIONS[PROBLEM.FOLLOWER]:
+                #filter out zero probabilites in followers deterministic decision rule 
+                for follower_action in np.nonzero(follower_alpha.decision_rule[state])[0]:
                     for leader_action, leader_action_probability in enumerate(leader_alpha.decision_rule):
-                        # check if action probabilities are greater than 0
-                        if follower_alpha.decision_rule[state][follower_action]>0 and leader_action_probability>0:
+                        # check if leader action probabilities are greater than 0
+                        if leader_action_probability>0:
                             joint_action = PROBLEM.get_joint_action(leader_action,follower_action)
                             # get value of current stage of the game :: value = b(x) * a1(u1) * a2(u2) * reward((u1,u2),x)
                             value += belief.value[state] * leader_alpha.decision_rule[leader_action] * follower_alpha.decision_rule[state][follower_action] * reward[joint_action][state]
@@ -132,7 +137,7 @@ class  PBVI:
                                 # get value of future stages of the game :: value += Pr(z|b,u) * evaluate(timestep+1,next_b)
                                 if next_belief_id is not None and timestep+1<self.horizon: 
                                     next_alpha_pair = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
-                                    value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(next_belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
+                                    value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
             values.append(value)
         return values
         

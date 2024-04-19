@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=120
-#SBATCH --time=63:00:00
+#SBATCH --cpus-per-task=125
+#SBATCH --time=50:00:00
 #SBATCH --error=error_file_boxPushing.txt
 #SBATCH --job-name=boxPushing
 #SBATCH --mem=30G
@@ -26,6 +26,6 @@ cplex -c set threads 0
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 echo "Run problem : boxPushing with horizon: $1 and iter : $2"
-python experiment_script.py problem=boxPushing horizon=$1 iter=$2
+python experiment_script.py problem=boxPushing horizon=$1 iter=$2 density=0.1
 echo " SOLVING DONE"
 deactivate

@@ -68,6 +68,7 @@ class Experiment():
     def construct_stackelberg_comparison_matrix(self):
         """function to create the general-sum game comparison matrix that shows the performance of the SOTA trained agents against the Stackelberg trained agents """
         print("Constructing Stackelberg Comparison matrix..")
+        start_time = time.time()
 
         # initialize stackelberg comparison matrix 
         matrix = {"Strong Leader" : {"Strong Follower" : None , "Blind Follower" : None},"Weak Leader" : {"Strong Follower" : None, "Blind Follower" : None }}
@@ -77,7 +78,7 @@ class Experiment():
         matrix["Strong Leader"]["Blind Follower"] = self.game.evaluate(0,0,self.policies["stackelberg"][False].get_leader_vector(),self.policies["stackelberg"][True].get_follower_vector())
         matrix["Weak Leader"]["Blind Follower"] = self.policies["stackelberg"][True].get_value(self.game.belief_space.initial_belief)
         matrix["Weak Leader"]["Strong Follower"] = self.game.evaluate(0,0,self.policies["stackelberg"][True].get_leader_vector(),self.policies["stackelberg"][False].get_follower_vector())
-        print("Done.. exporting to csv..")
+        print(f"Done.. in {time.time()-start_time} seconds... exporting to csv..")
         
         # convert to dataframe and export to csv file
         matrix = pd.DataFrame(matrix)

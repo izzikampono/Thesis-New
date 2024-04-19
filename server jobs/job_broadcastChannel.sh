@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=120
+#SBATCH --cpus-per-task=125
 #SBATCH --time=65:00:00
 #SBATCH --error=error_file_broadcastChannel.txt
 #SBATCH --job-name=broadcastChannel
-#SBATCH --mem=30G
+#SBATCH --mem=40G
 #SBATCH --output=output_broadcastChannel.log
 
 module purge

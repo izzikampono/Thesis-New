@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=120
-#SBATCH --time=50:00:00
+#SBATCH --cpus-per-task=125
+#SBATCH --time=60:00:00
 #SBATCH --error=error_fireFighting_2_3_3.txt
 #SBATCH --job-name=fireFighting_2_3_3
 #SBATCH --mem=30G
@@ -26,7 +26,7 @@ cplex -c set threads 0
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 echo "Run problem : fireFighting_2_3_3 with horizon: $1 and iter : $2"
-python experiment_script.py problem=fireFighting_2_3_3 horizon=$1 iter=$2
+python experiment_script.py problem=fireFighting_2_3_3 horizon=$1 iter=$2 density=0.1
 echo " SOLVING DONE"
 
 deactivate

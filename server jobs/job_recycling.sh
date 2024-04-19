@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=70
+#SBATCH --cpus-per-task=100
 #SBATCH --time=40:00:00
 #SBATCH --error=error_file_recycling.txt
 #SBATCH --job-name=recycling
-#SBATCH --mem=30G
+#SBATCH --mem=50G
 #SBATCH --output=output_recycling.log
 
 module purge
