@@ -139,6 +139,7 @@ class  PBVI:
                                     next_alpha_pair = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
                                     value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
             values.append(value)
+        print(timestep)
         return values
         
 

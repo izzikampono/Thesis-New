@@ -153,7 +153,24 @@ class Experiment():
                 # save the alpha vector at the initial belief state (will be used to get the policy or get the value of the game )
                 self.policies[gametype][sota] = self.game.value_function.get_alpha_pairs(0,0)
         # construct stackelberg comparison matrix and export 
-        self.construct_stackelberg_comparison_matrix()
+        # self.construct_stackelberg_comparison_matrix()
+        # save databse as a csv file
+        self.export_database()
+        return self.database
+    
+    def run_experiments_without_comparison(self,density=0.00001):
+        """run experiments for all benchmarks of a fixed problem (solves for all gametypes and SOTA mode)"""
+        
+        for gametype in ["cooperative","zerosum","stackelberg"]:
+            for sota in [False,True]:
+                for horizon in range(1,self.planning_horizon+1):
+                    # run game with set number of iterations 
+                    leader_values,follower_values,times = self.run_single_experiment(horizon,gametype,sota,density)
+                    # add results to database
+                    self.add_to_database(gametype,horizon,sota,self.iterations,times,self.game.belief_space.size(),leader_values,follower_values,density)
+
+                # save the alpha vector at the initial belief state (will be used to get the policy or get the value of the game )
+                self.policies[gametype][sota] = self.game.value_function.get_alpha_pairs(0,0)
         # save databse as a csv file
         self.export_database()
         return self.database
