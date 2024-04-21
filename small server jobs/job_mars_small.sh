@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=120
-#SBATCH --time=62:00:00
+#SBATCH --cpus-per-task=80
+#SBATCH --time=50:00:00
 #SBATCH --error=error_file_mar_smalls.txt
 #SBATCH --job-name=Mars_small
 #SBATCH --mem=50G

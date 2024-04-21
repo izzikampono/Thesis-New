@@ -4,7 +4,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --error=error_file_relay4_small.txt
 #SBATCH --job-name=relay4_small
-#SBATCH --mem=60G
+#SBATCH --mem=20G
 #SBATCH --output=output_relay4_small.log
 
 module purge

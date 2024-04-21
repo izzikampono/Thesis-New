@@ -4,7 +4,7 @@
 #SBATCH --time=30:00:00
 #SBATCH --error=error_file_prisoners_small.txt
 #SBATCH --job-name=prisoners_small
-#SBATCH --mem=30G
+#SBATCH --mem=20G
 #SBATCH --output=output_prisoners_small.log
 
 module purge

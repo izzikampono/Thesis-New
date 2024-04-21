@@ -4,7 +4,7 @@
 #SBATCH --time=40:00:00
 #SBATCH --error=error_file_broadcastChannel.txt
 #SBATCH --job-name=broadcastChannel_small
-#SBATCH --mem=40G
+#SBATCH --mem=20G
 #SBATCH --output=output_broadcastChannel.log
 
 module purge

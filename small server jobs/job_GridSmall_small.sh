@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=70
-#SBATCH --time=60:00:00
+#SBATCH --time=50:00:00
 #SBATCH --error=error_file_GridSmall_small.txt
 #SBATCH --job-name=GridSmall_small
-#SBATCH --mem=50G
+#SBATCH --mem=20G
 #SBATCH --output=output_GridSmall_small.log
 
 module purge
