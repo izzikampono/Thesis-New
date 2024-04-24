@@ -1,6 +1,7 @@
 *.cpython
 *.pyc
 *.lp
+*.LP
 *.csv
 *.sh
 *.log
