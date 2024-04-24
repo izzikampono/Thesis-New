@@ -2,10 +2,10 @@
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=100
 #SBATCH --time=45:00:00
-#SBATCH --error=error_file_2generals_densities.txt
-#SBATCH --job-name=randomgame
+#SBATCH --error=error_file_alignment2x4_densities.txt
+#SBATCH --job-name=alignment2x4
 #SBATCH --mem=25G
-#SBATCH --output=output_2generals_densities.log
+#SBATCH --output=output_alignment2x4_densities.log
 
 module purge
 module load Python/3.9.6-GCCcore-11.2.0

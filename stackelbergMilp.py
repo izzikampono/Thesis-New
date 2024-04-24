@@ -140,19 +140,19 @@ class MILP:
         ## Add Constraints (subject to) :: V^2(x,a1,a2) < V^2(x,a1,u2) for all u in U2 and x in X
         # first, define lhs of linear equivalence expression equal to V^2(x,a1,a2) - without the belief value 
         lhs = {}
-        for state in PROBLEM.STATES:
+        for state in np.nonzero(self.belief.value)[0]:
             lhs[state] = 0
             for follower_action,follower_action_probability in enumerate(follower_DR[state]):
                 for leader_action, leader_action_probability in enumerate(leader_DR):
                     joint_action = PROBLEM.get_joint_action(leader_action,follower_action)
-                    #  define V^2(x,a1,a2) :: \sum_{x} \sum_{u_joint} += beta[FOLLOWER](x,u_joint) * a_joint(u_joint|x)
+                    #  define V^2(x,a1,a2) :: \sum_{x} \sum_{u_joint} += beta[FOLLOWER](x,u_joint) * joint_DR(u_joint|x)
                     lhs[state] += self.beta.two_d_vectors[PROBLEM.FOLLOWER][state][joint_action]  * joint_DR[state][joint_action] 
 
         # define right hand side of the linear equivalence expression equal to  V^2(x,a1,u2) for every u in U2 and every x in X using loops
-        for state in PROBLEM.STATES:
+        for state in np.nonzero(self.belief.value)[0]:
             for follower_action,follower_action_probability in enumerate(follower_DR[state]):
                 rhs = 0
-                #  define V^2(x,a1,u2) for every follower action :: \sum_{x} \sum_{u_leader} += beta[FOLLOWER](x,u_joint) * a_leader(u_leader)
+                #  define V^2(x,a1,u2) for every follower action :: \sum_{x} \sum_{u_leader} += beta[FOLLOWER](x,u_joint) * leader_DR(u_leader)
                 for leader_action, leader_action_probability in enumerate(leader_DR):
                     rhs += self.beta.two_d_vectors[PROBLEM.FOLLOWER][state][PROBLEM.get_joint_action(leader_action,follower_action)] * leader_action_probability
                 # for every state and follower action, we add the constraint V^2(x,a1,a2) >= V^2(x,a1,u2) to the milp, note that the LHS of the expression remains the same 

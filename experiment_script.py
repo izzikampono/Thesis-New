@@ -42,6 +42,7 @@ if len(sys.argv)> 3 :
 # if statement for when density is specificed as a command line argument
 else :
     experiment.run_experiments(density)
+experiment.generate_comparison_tables()
 experiment.generate_summary_table()
 experiment.horizon_value_plot()
 experiment.plots()

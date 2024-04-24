@@ -98,7 +98,11 @@ def reconstruct_alpha_vectors(belief_id, beta, optimal_decision_rule) ->tuple[Al
                 vectors[PROBLEM.FOLLOWER][state] +=optimal_decision_rule.leader[leader_action] * optimal_decision_rule.follower[state][follower_action]  * beta.two_d_vectors[PROBLEM.FOLLOWER][state][joint_action] 
     return AlphaVector(optimal_decision_rule.leader,vectors[PROBLEM.LEADER],belief_id) , AlphaVector(optimal_decision_rule.follower,vectors[PROBLEM.FOLLOWER],belief_id)
 
-def exponential_decrease(start, stop, num):
+def exponential_decrease(start, num):
     "function to generate exponentially decreasing values to use as the density (hyperparameter) values for the expansion of the  belief space. "
-    values = np.linspace(0.15,0.001,num)
-    return values
+    densities = []
+    value = start
+    for _ in range(num):
+        densities.append(value)
+        value /= 3
+    return densities

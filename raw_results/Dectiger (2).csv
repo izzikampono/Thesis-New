@@ -1,0 +1,25 @@
+gametype,SOTA,horizon,iterations,time,number_of_beliefs,leader values,follower values,density
+cooperative,Stackelberg,1,1,0.058748722076416016,2,9.0,[9. 9.],0.3
+cooperative,Stackelberg,1,2,0.02391672134399414,2,9.0,[9. 9.],0.3
+cooperative,Stackelberg,2,1,0.08525323867797852,4,18.0,[18. 18.],0.3
+cooperative,Stackelberg,2,2,0.08937191963195801,4,18.0,[18. 18.],0.3
+cooperative,State of the Art,1,1,0.00022912025451660156,2,9.0,[9. 9.],0.3
+cooperative,State of the Art,1,2,0.00019311904907226562,2,9.0,[9. 9.],0.3
+cooperative,State of the Art,2,1,0.003904104232788086,4,18.0,[9. 9.],0.3
+cooperative,State of the Art,2,2,0.004324913024902344,4,18.0,[9. 9.],0.3
+zerosum,Stackelberg,1,1,0.023881912231445312,2,-75.0,[65.9375 84.0625],0.3
+zerosum,Stackelberg,1,2,0.023558855056762695,2,-75.0,[65.9375 84.0625],0.3
+zerosum,Stackelberg,2,1,0.11317992210388184,4,-150.0,[150. 150.],0.3
+zerosum,Stackelberg,2,2,0.10274910926818848,4,-150.0,[150. 150.],0.3
+zerosum,State of the Art,1,1,0.02585911750793457,2,-75.0,[84.0625 65.9375],0.3
+zerosum,State of the Art,1,2,0.025709152221679688,2,-75.0,[84.0625 65.9375],0.3
+zerosum,State of the Art,2,1,0.10709786415100098,4,-150.0,[84.0625 65.9375],0.3
+zerosum,State of the Art,2,2,0.10860109329223633,4,-150.0,[84.0625 65.9375],0.3
+stackelberg,Stackelberg,1,1,0.019678831100463867,2,3.5,[-20.  -7.],0.3
+stackelberg,Stackelberg,1,2,0.0192868709564209,2,3.5,[-20.  -7.],0.3
+stackelberg,Stackelberg,2,1,0.08549690246582031,4,10.486484375,[-16.67921875 -14.        ],0.3
+stackelberg,Stackelberg,2,2,0.08485698699951172,4,10.486484375,[-16.67921875 -14.        ],0.3
+stackelberg,State of the Art,1,1,0.018929004669189453,2,3.5,[-20.  -7.],0.3
+stackelberg,State of the Art,1,2,0.018893003463745117,2,3.5,[-20.  -7.],0.3
+stackelberg,State of the Art,2,1,0.08559417724609375,4,10.486484375,[-20.  -7.],0.3
+stackelberg,State of the Art,2,2,0.08514904975891113,4,10.486484375,[-20.  -7.],0.3

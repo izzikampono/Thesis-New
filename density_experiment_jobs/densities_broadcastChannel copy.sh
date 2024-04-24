@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=100
 #SBATCH --time=45:00:00
 #SBATCH --error=error_file_broadcastChannel_densities.txt
-#SBATCH --job-name=randomgame
+#SBATCH --job-name=broadcastChannel_densities
 #SBATCH --mem=25G
 #SBATCH --output=output_broadcastChannel_densities.log
 
@@ -17,15 +17,15 @@ if [ $# -lt 2 ]; then
     exit 1
 fi
 source /scratch/s3918343/venvs/thesis/bin/activate
-echo : "initialized python evironment"
+echo : "\n\ninitialized python evironment"
 module load CPLEX/22.1.1-GCCcore-11.2.0
 cplex -c set parallel -1
 cplex quit
 cplex -c set threads 0
 cplex quit
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
-
-echo "Run problem :broadcastChannel  with horizon: $1 and iter : $2, starting density : $3"
+echo : "CPU SET TO 100"
+echo "Run problem :broadcastChannel  with horizon: $1 and iter : $2, starting density : $3\n\n"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 python -m pip install joblib
 python densities_experiment.py problem=broadcastChannel horizon=$1 iter=$2 density=$3

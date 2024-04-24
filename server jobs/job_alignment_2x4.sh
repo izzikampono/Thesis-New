@@ -26,7 +26,7 @@ cplex -c set threads 0
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 echo "Run problem : alignment_2x4 with horizon: $1 and iter : $2"
-python experiment_script.py problem=alignment_2x4 horizon=$1 iter=$2
+python server_script.py problem=alignment_2x4 horizon=$1 iter=$2
 echo " SOLVING DONE"
 
 deactivate

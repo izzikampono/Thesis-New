@@ -84,63 +84,87 @@ class  PBVI:
         
         # return policy, value at the initial belief and the time it took to solve the game 
         return values, time.time() - start_time
-        
-    def evaluate(self,belief_id,timestep,leader_alpha: AlphaVector,follower_alpha:AlphaVector) -> tuple[float,float]:
-        """recursive function to get the values from two seperate individual policies, the function traverses individuals policies in parallel to get a joint value for the game.
-            this function calculates the joint value by simulating a game where the agents follow the prescribed policies from different solve methods (Stackelberg/State of the art)
-            
-            values = (0,0)
-            for agent in [leader,follower]:
-                value = 0
-                for x in X:
-                    for u_2 in U_Follower
-                        for u_1 in U_leader:
-                            if a(u_1)>0 and a(u_2|x) > 0 :
-                                value += b(x) * a1(u1) * a2(u2) * reward((u1,u2),x)
-                                for z in Z:
-                                    next_b = T(b,u,z)
-                                    next_alpha_vectors = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
-                                    value += Pr(z|b,u1,u2) * evaluate(next_b,timestep+1,next_alpha_vectors.leader,next_alpha_vectors.follower)
-                values.append(value)
+   
+    def calculate_reward(self,belief,leader_DR,follower_DR):
+        """calculates Reward for a given belief and agent decision rules 
+           r(b,a1,a2) = sum_{x} sum_{u1} sum_{u2} b(x) * a1(u1) * a2(u2) * r(x,(u1,u2))
+        """ 
 
-            return values
-        
-        
-        
-        
-        """
-        # edge case of the recursive function
-        if  timestep >= self.horizon or leader_alpha is None or follower_alpha is None: return (0,0)
-        
-        #initialize values list and get belief state corresponding to belief_id
-        values = []
-        belief = self.belief_space.get_belief(belief_id)
-        
-        
-        # get V(b) recursively by \sum_{x} \sum{u_joint} += b(x) * leader_decision_rule(u1) *  follower_decision_rule(u2) + \sum_{z} += Pr(z|b,u_joint) * V(TRANSITION(b,u_joint,z))
+        rewards = np.zeros(2)
         for agent in range(2):
-            value = 0
-            reward = PROBLEM.REWARDS["stackelberg"][agent]
             for state in PROBLEM.STATES:
-                #filter out zero probabilites in followers deterministic decision rule 
-                for follower_action in np.nonzero(follower_alpha.decision_rule[state])[0]:
-                    for leader_action, leader_action_probability in enumerate(leader_alpha.decision_rule):
-                        # check if leader action probabilities are greater than 0
-                        if leader_action_probability>0:
-                            joint_action = PROBLEM.get_joint_action(leader_action,follower_action)
-                            # get value of current stage of the game :: value = b(x) * a1(u1) * a2(u2) * reward((u1,u2),x)
-                            value += belief.value[state] * leader_alpha.decision_rule[leader_action] * follower_alpha.decision_rule[state][follower_action] * reward[joint_action][state]
-                            for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
+                for leader_action in PROBLEM.ACTIONS[PROBLEM.LEADER]:
+                    for follower_action in PROBLEM.ACTIONS[PROBLEM.FOLLOWER]:
+                        rewards[agent] += belief.value[state] * leader_DR[leader_action] * follower_DR[state][follower_action] * PROBLEM.REWARDS["stackelberg"][agent][PROBLEM.get_joint_action(leader_action,follower_action)][state]
+        return rewards
+    
+    def evaluate2(self,belief_id,timestep,leader_value_fn: ValueFunction,follower_value_fn:ValueFunction) -> tuple[float,float]:
+        """function to evaluate leader and follower poliicies from different solve methods (stackelberg/state of the are).
+           Does this by doing another point based backup using belief points from the last stage up to the 0th stage.
+           at each stage, it uses decision rules prescribed by the input policy to create an alphavector representative of the solution of the subgame rooted at that belief_state .         
+        """
 
-                                next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation)
-                                
-                                # get value of future stages of the game :: value += Pr(z|b,u) * evaluate(timestep+1,next_b)
-                                if next_belief_id is not None and timestep+1<self.horizon: 
-                                    next_alpha_pair = self.value_function.get_alpha_pairs(timestep+1,next_belief_id)
-                                    value +=  observation_probability(joint_observation,belief,joint_action) * self.evaluate(belief_id, timestep+1, next_alpha_pair.get_leader_vector() , next_alpha_pair.get_follower_vector())[agent]
-            values.append(value)
-        print(timestep)
-        return values
+        """ pseudo code :: 
+
+            for t in {H-1,..,0} :
+                for b in beliefspace[t] :
+                    for x in X :
+                        value = 0
+                        for u_joint in U_joint:
+                            value += r(x,u_joint)
+                            for z in Z:
+                                next_b = Transition(b,u,z)
+                                for y in X:
+                                    value += Dynamics(y,z,x,u) * V_{t+1}(next_b)[y]
+                            value *= joint_decision_rule (u_joint | x)
+        """
+
+        # initialize table of values and get all belief values by traversing the tree in a bottom up manner
+        value_fn = {}
+        for timestep in range(self.horizon-1,-1,-1):
+            value_fn[timestep] = {}
+            print(f"timestep = {timestep}")
+            for belief_id in self.belief_space.time_index_table[timestep]:
+                # initialize value function to store alpha vector for each agent at each beleif point
+                value_fn[timestep][belief_id] = {PROBLEM.LEADER:{},PROBLEM.FOLLOWER:{}}
+                for agent in range(2):
+                    for state in PROBLEM.STATES:
+
+                        state_value = 0
+
+                        for joint_action in PROBLEM.JOINT_ACTIONS:
+                            # get reward component :: r(x,u)
+
+                            state_action_value = PROBLEM.REWARDS["stackelberg"][agent][joint_action][state]
+        
+                           
+                            if timestep+1< self.horizon:
+                                for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
+                                    # next_b = Transtition(b,u,z)
+                                    next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation)
+                                    for next_state in PROBLEM.STATES :
+                                        # get future component :: Pr(y,z|x,u) * V_t+1(next_b)[y] 
+                                        state_action_value += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] *  value_fn[timestep+1][next_belief_id][agent][next_state]
+                            
+                            # multiply state-action value by joint action probability from the input leader and follower policy tree
+                            leader_action, follower_action = PROBLEM.get_seperate_action(joint_action)
+                            state_action_value *= leader_value_fn.get_leader_DR(belief_id,timestep)[leader_action] * follower_value_fn.get_follower_DR(belief_id,timestep)[state][follower_action]
+                            
+                            # add current state_action value to cummulative state_value
+                            state_value += state_action_value
+                        
+                        # add alphavector values in the value function by state 
+                        value_fn[timestep][belief_id][agent][state] = state_value
+                    
+                print(f"\tbelief = {belief_id},\tvalue :: {value_fn[timestep][belief_id]}")
+        
+        ## get value at initial belief ::
+        initial_value = np.zeros(2)
+        for agent in range(2):
+            for state in PROBLEM.STATES: 
+                initial_value[agent] += self.belief_space.initial_belief.value[state] * value_fn[0][0][agent][state]
+
+        return initial_value
         
 
         

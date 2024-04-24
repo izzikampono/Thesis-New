@@ -35,10 +35,16 @@ class ValueFunction:
 
 #===== public methods ===============================================================================================
 
-    def get_alpha_pairs(self,timestep,belief_id):
+    def get_alpha_pairs(self,belief_id,timestep):
         return JointAlphaVector(self.leader_value_fn.get_vector_at_belief(belief_id,timestep),self.folower_value_fn.get_vector_at_belief(belief_id,timestep),belief_id)
     
-    
+    def get_leader_DR(self,belief_id,timestep):
+        return self.leader_value_fn.get_vector_at_belief(belief_id,timestep).decision_rule
+
+    def get_follower_DR(self,belief_id,timestep):
+        return self.folower_value_fn.get_vector_at_belief(belief_id,timestep).decision_rule
+
+
     def solve(self,belief_id,timestep) -> tuple[AlphaVector,AlphaVector]:
         """solve function that solves a subgame at each belief point in the tree by creating beta vectors and using a Mixed integer linear program to solve for the optimal decision rule"""
         

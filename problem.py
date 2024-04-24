@@ -78,8 +78,9 @@ class PROBLEM:
             raise ValueError("Constants has already been initialized.")
         cls._instance = cls(value)
 
-    def get_joint_action(self,u1,u2):
-        return self.action_dictionary[f"{u1}{u2}"]
+    def get_joint_action(self,leader_action,follower_action):
+        "returns the joint action of two seperate leader and follower actions "
+        return self.action_dictionary[f"{leader_action}{follower_action}"]
     
     def get_seperate_action(self,uj):
         """function to seperate a joint action into leader action and follower action """

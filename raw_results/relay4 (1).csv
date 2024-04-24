@@ -1,0 +1,2 @@
+gametype,SOTA,horizon,iterations,time,number_of_beliefs,leader values,follower values,density
+cooperative,Stackelberg,1,2,"[0.025247812271118164, 0.013098955154418945]",2,"[-1.0, -1.0]","[array([-1., -1., -1., -1.]), array([-1., -1., -1., -1.])]",0.05

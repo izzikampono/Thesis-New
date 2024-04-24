@@ -3,7 +3,7 @@
 #SBATCH --cpus-per-task=100
 #SBATCH --time=45:00:00
 #SBATCH --error=error_file_2generals_densities.txt
-#SBATCH --job-name=randomgame
+#SBATCH --job-name=2_generals_densities
 #SBATCH --mem=25G
 #SBATCH --output=output_2generals_densities.log
 
@@ -25,7 +25,7 @@ cplex -c set threads 0
 cplex quit
 echo : "\n\n\n Loaded Cplex and set to parallel computing \n\n\n"
 
-echo "Run problem :2generals  with horizon: $1 and iter : $2, starting density : $3"
+echo "Run problem : 2generals  with horizon: $1 and iter : $2, starting density : $3"
 cd /scratch/s3918343/venvs/thesis/Thesis-New
 python -m pip install joblib
 python densities_experiment.py problem=2generals horizon=$1 iter=$2 density=$3

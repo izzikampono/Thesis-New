@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=50
-#SBATCH --time=24:00:00
+#SBATCH --cpus-per-task=75
+#SBATCH --time=36:00:00
 #SBATCH --error=error_file_recycling_densities.txt
 #SBATCH --job-name=recycling
 #SBATCH --mem=30G
