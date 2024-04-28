@@ -107,7 +107,7 @@ class BeliefSpace:
         # change density value if optional argument is provided
         if density is not None : self.set_density(density)
 
-        # initialize belief dictionary that keeps mapping of beliefs to belief_ids
+        # initialize belief dictionary that keeps mapping of beliefs to belief_ids, belief id 0 always belongs to the initial beleif
         self.belief_dictionary = {0:self.initial_belief}
 
         # initialize time_index_table dictionary that stores beliefs at every timestep as a set (so as to only keep unique ids)

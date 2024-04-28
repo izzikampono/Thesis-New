@@ -128,9 +128,8 @@ class Experiment():
         belief_sizes = []
 
         #initialize game with gametype and sota 
-        self.initialize_game(horizon,1,gametype,sota)
+        self.initialize_game(horizon,density=None,gametype=gametype,sota=sota)
         print(f"\t\t\t Solving {gametype} {PROBLEM.NAME} GAME Horizon {horizon} WITH SOTA = {self.game.sota}  ")
-        self.game.belief_space.expansion()
         for iter in range(1,self.iterations+1):
             print(f"iteration : {iter}")
             self.game.reset()

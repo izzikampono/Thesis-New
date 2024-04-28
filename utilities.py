@@ -104,5 +104,5 @@ def exponential_decrease(start, num):
     value = start
     for _ in range(num):
         densities.append(value)
-        value /= 3
+        value /= 5
     return densities

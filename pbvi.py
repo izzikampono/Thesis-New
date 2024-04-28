@@ -6,6 +6,7 @@ from beliefSpace import PROBLEM, BeliefSpace
 from decisionRule import DecisionRule
 from problem import PROBLEM
 import time
+import sys
 from utilities import *
 PROBLEM = PROBLEM.get_instance()
 import gc
@@ -29,7 +30,7 @@ class  PBVI:
         """function to reset belief space and value function before solving a new/different game"""
         # set new density if the optional input to the function is given
         if density is not None: self.density = density
-        self.belief_space.reset(self.density)
+        self.belief_space.reset(density)
         self.value_function = ValueFunction(self.belief_space,self.gametype,self.sota)
     
     def backward_induction(self):
@@ -142,10 +143,12 @@ class  PBVI:
                                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
                                     # next_b = Transtition(b,u,z)
                                     next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation)
-                                    for next_state in PROBLEM.STATES :
-                                        # get future component :: Pr(y,z|x,u) * V_t+1(next_b)[y] 
-                                        state_action_value += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] *  value_fn[timestep+1][next_belief_id][agent][next_state]
-                            
+                                    if next_belief_id is not None:
+                                        for next_state in PROBLEM.STATES :
+                                       
+                                            # get future component :: Pr(y,z|x,u) * V_t+1(next_b)[y] 
+                                            state_action_value += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] *  value_fn[timestep+1][next_belief_id][agent][next_state]
+                                       
                             # multiply state-action value by joint action probability from the input leader and follower policy tree
                             leader_action, follower_action = PROBLEM.get_seperate_action(joint_action)
                             state_action_value *= leader_value_fn.get_leader_DR(belief_id,timestep)[leader_action] * follower_value_fn.get_follower_DR(belief_id,timestep)[state][follower_action]
