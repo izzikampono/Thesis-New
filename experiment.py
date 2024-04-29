@@ -256,7 +256,7 @@ class Experiment():
         return dataframe        
 
 
-    def generate_summary_table(self):
+    def generate_summary_table(self,densities = False):
         """function that generates a concise table summarizing the results of the experiments.
             uses data stored in self.database 
         """
@@ -287,12 +287,13 @@ class Experiment():
             # set indexes of dataframe
             dataframe.index = [f"{PROBLEM.NAME}({horizon})" for horizon in range(1,self.planning_horizon+1)]
             #export dataframe to csv file
-            dataframe.to_csv(f"processed_results/{gametype}_{PROBLEM.NAME}.csv",index=True)
+            if densities == FALSE : dataframe.to_csv(f"processed_results/{gametype}_{PROBLEM.NAME}.csv",index=True)
+            else : dataframe.to_csv(f"processed_results/{gametype}_{PROBLEM.NAME}_densities_experiment.csv",index=True)
             tables[gametype]=dataframe
         return tables
 
 
-    def plots(self):
+    def plots(self,densities = FALSE):
         """makes plots for each gametype that shows the performance of different algorithms ("SOTA"/"Stackelberg") on each gametype"""
         fig, axs = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
         colors = ['blue', 'red']
@@ -310,13 +311,12 @@ class Experiment():
         fig.suptitle(f"Results for {PROBLEM.NAME} with horizon = {self.planning_horizon}")
         plt.tight_layout()
         plt.legend()
-        plt.savefig(f"plots/{PROBLEM.NAME} ({self.planning_horizon}).png")
+        if densities == False : plt.savefig(f"plots/{PROBLEM.NAME}_({self.planning_horizon}).png")
+        else : plt.savefig(f"plots/{PROBLEM.NAME}_({self.planning_horizon})_densities.png")
         plt.show(block=False)
        
-
-
      
-    def horizon_value_plot(self):
+    def horizon_value_plot(self,density = False):
         bar_width = 0.35
         fig, axs = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
         for id,gametype in enumerate(["cooperative","stackelberg","zerosum"]):
@@ -346,7 +346,8 @@ class Experiment():
         fig.suptitle(f"Results for {PROBLEM.NAME}")
         plt.legend()
         plt.tight_layout()
-        plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({self.planning_horizon}).png")
+        if densities == False : plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({self.planning_horizon}).png")
+        else : plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({self.planning_horizon}_densities.png")
         plt.show(block=False)
         plt.pause(8)
         plt.close('all')
