@@ -72,19 +72,18 @@ class Experiment():
         start_time = time.time()
 
         # initialize stackelberg comparison matrix 
-        matrix = {"Strong Leader" : {"Strong Follower" : None , "Blind Follower" : None},"Weak Leader" : {"Strong Follower" : None, "Blind Follower" : None }}
+        matrix = {"Strong Leader Policy" : {"Strong Follower Policy" : None , "Blind Follower Policy" : None},"Weak Leader Policy" : {"Strong Follower Policy" : None, "Blind Follower Policy" : None }}
         
         # populate with values of evaluated policies
-        matrix["Strong Leader"]["Strong Follower"] =  self.policies["stackelberg"][False].get_alpha_pairs(0,0).get_value(self.game.belief_space.initial_belief)
-        matrix["Strong Leader"]["Blind Follower"] = self.game.evaluate2(0,0,self.policies["stackelberg"][False],self.policies["stackelberg"][True])
-        matrix["Weak Leader"]["Blind Follower"] = self.policies["stackelberg"][True].get_alpha_pairs(0,0).get_value(self.game.belief_space.initial_belief)
-        matrix["Weak Leader"]["Strong Follower"] = self.game.evaluate2(0,0,self.policies["stackelberg"][True],self.policies["stackelberg"][False])
+        matrix["Strong Leader Policy"]["Strong Follower Policy"] =  self.policies["stackelberg"][False].get_alpha_pairs(0,0).get_value(self.game.belief_space.initial_belief)
+        matrix["Strong Leader Policy"]["Blind Follower Policy"] = self.game.evaluate2(0,0,self.policies["stackelberg"][False],self.policies["stackelberg"][True])
+        matrix["Weak Leader Policy"]["Blind Follower Policy"] = self.policies["stackelberg"][True].get_alpha_pairs(0,0).get_value(self.game.belief_space.initial_belief)
+        matrix["Weak Leader Policy"]["Strong Follower Policy"] = self.game.evaluate2(0,0,self.policies["stackelberg"][True],self.policies["stackelberg"][False])
         print(f"Done.. in {time.time()-start_time} seconds... exporting to csv..")
         
         # convert to dataframe and export to csv file
-        matrix = pd.DataFrame(matrix)
-        self.comparison_matrix = matrix
-        matrix.to_csv(f"comparison_matrix/{PROBLEM.NAME}({self.planning_horizon}).csv", index=False)        
+        self.comparison_matrix = pd.DataFrame(matrix)
+        self.comparison_matrix .to_csv(f"comparison_matrix/{PROBLEM.NAME}({self.planning_horizon}).csv", index=True)        
 
 
 #===== public methods ===============================================================================================
@@ -293,9 +292,9 @@ class Experiment():
         return tables
 
 
-    def plots(self,densities = FALSE):
+    def plots(self,densities = False):
         """makes plots for each gametype that shows the performance of different algorithms ("SOTA"/"Stackelberg") on each gametype"""
-        fig, axs = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
+        fig, axs = plt.subplots(3, 1, figsize=(9, 7), sharex=True)
         colors = ['blue', 'red']
         line_widths = [2.0, 1.5]
         for idx,gametype in enumerate(["cooperative","stackelberg","zerosum"]):
@@ -304,19 +303,33 @@ class Experiment():
             for color_idx,sota in enumerate(["Stackelberg","State of the Art"]):
                 y = [value for value in  data["leader values"][data["SOTA"]=="Stackelberg"].to_numpy()]
                 axs[idx].plot(x,y,linestyle="--",label = sota,color=colors[color_idx],linewidth=line_widths[color_idx])
-                axs[idx].set_xlabel("Iterations")
-                axs[idx].set_ylabel("leader value")
-                axs[idx].set_title(f"{gametype} game") 
-            axs[idx].legend()
+                axs[idx].set_title(f"{gametype}") 
+        # axs[idx].legend()
+       
+
+        # set legend
+        plt.legend(loc='lower center')
+            
+        # Add label for all axes
+        fig.text(0.5, 0.04, 'Iterations', ha='center', va='center')
+        fig.text(0.05, 0.5, 'leader value', ha='center', va='center', rotation='vertical')
+
+        # set plot title 
         fig.suptitle(f"Results for {PROBLEM.NAME} with horizon = {self.planning_horizon}")
-        plt.tight_layout()
-        plt.legend()
+        
+        # Adjust layout
+        plt.tight_layout(rect=[0.05, 0.05, 0.95, 0.95])  # Adjust the rect parameter as needed
+
+
+
+        # if statements for saving the resulting plot depending on the experiment type 
         if densities == False : plt.savefig(f"plots/{PROBLEM.NAME}_({self.planning_horizon}).png")
         else : plt.savefig(f"plots/{PROBLEM.NAME}_({self.planning_horizon})_densities.png")
+        
         plt.show(block=False)
        
      
-    def horizon_value_plot(self,density = False):
+    def horizon_value_plot(self,densities = False):
         bar_width = 0.35
         fig, axs = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
         for id,gametype in enumerate(["cooperative","stackelberg","zerosum"]):
@@ -328,7 +341,7 @@ class Experiment():
             colors = ['blue', 'red']
 
             for horizon in range(1,self.planning_horizon+1):
-                data = self.database[(self.database["gametype"]==gametype) & (self.database["horizon"]==self.planning_horizon)]
+                data = self.database[(self.database["gametype"]==gametype) & (self.database["horizon"]==horizon)]
                 sota_values.append(np.average([value for value in  data["leader values"][data["SOTA"]=="State of the Art"].to_numpy()]))
                 non_sota_values.append(np.average([value for value in  data["leader values"][data["SOTA"]=="Stackelberg"].to_numpy()]))
                 x_labels.append(horizon)

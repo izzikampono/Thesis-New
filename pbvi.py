@@ -112,12 +112,12 @@ class  PBVI:
                     for x in X :
                         value = 0
                         for u_joint in U_joint:
-                            value += r(x,u_joint)
+                            value += r(x,u_joint) * a(u_joint)
                             for z in Z:
                                 next_b = Transition(b,u,z)
                                 for y in X:
-                                    value += Dynamics(y,z,x,u) * V_{t+1}(next_b)[y]
-                            value *= joint_decision_rule (u_joint | x)
+                                    value += Dynamics(y,z,x,u) * V_{t+1}(next_b)[y] * u_joint_probability
+                            
         """
 
         # initialize table of values and get all belief values by traversing the tree in a bottom up manner
@@ -134,10 +134,14 @@ class  PBVI:
                         state_value = 0
 
                         for joint_action in PROBLEM.JOINT_ACTIONS:
-                            # get reward component :: r(x,u)
-
-                            state_action_value = PROBLEM.REWARDS["stackelberg"][agent][joint_action][state]
-        
+                          
+                            # seperate the join action into seperate agent actions and get the probabilitiy of each action from the two seperate policies 
+                            leader_action, follower_action = PROBLEM.get_seperate_action(joint_action)
+                            joint_action_probability = leader_value_fn.get_leader_DR(belief_id,timestep)[leader_action] * follower_value_fn.get_follower_DR(belief_id,timestep)[state][follower_action]
+                            
+                            # get reward component :: r(x,u) * a(u_joint) * b(x)
+                            state_action_value = PROBLEM.REWARDS["stackelberg"][agent][joint_action][state]  * self.belief_space.get_belief(belief_id).value[state] * joint_action_probability
+                            
                            
                             if timestep+1< self.horizon:
                                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
@@ -146,13 +150,10 @@ class  PBVI:
                                     if next_belief_id is not None:
                                         for next_state in PROBLEM.STATES :
                                        
-                                            # get future component :: Pr(y,z|x,u) * V_t+1(next_b)[y] 
-                                            state_action_value += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] *  value_fn[timestep+1][next_belief_id][agent][next_state]
+                                            # get future component :: Pr(y,z|x,u) * V_t+1(next_b)[y] * a_joint(u_joint|x)
+                                            state_action_value +=  joint_action_probability * PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] *  value_fn[timestep+1][next_belief_id][agent][next_state]
                                        
-                            # multiply state-action value by joint action probability from the input leader and follower policy tree
-                            leader_action, follower_action = PROBLEM.get_seperate_action(joint_action)
-                            state_action_value *= leader_value_fn.get_leader_DR(belief_id,timestep)[leader_action] * follower_value_fn.get_follower_DR(belief_id,timestep)[state][follower_action]
-                            
+                           
                             # add current state_action value to cummulative state_value
                             state_value += state_action_value
                         

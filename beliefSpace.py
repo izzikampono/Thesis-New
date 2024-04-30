@@ -35,6 +35,7 @@ class BeliefSpace:
         #initialize network that keeps track of connections between belief ids  
         self.network = {}
 
+
 #===== private methods ===============================================================================================
     
     def check_network_connection(self,belief_id,joint_action,joint_observation) -> Bool:

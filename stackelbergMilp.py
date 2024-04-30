@@ -60,6 +60,7 @@ class MILP:
                 self.milp.add_constraint(sum == follower_action_probability)
 
     def calculate_follower_DR(self,leader_decision_rule,state)-> list:
+        """function that calculates the followers decision rule given a leader decision rule and observed state by the follower """
         max_value = -np.inf
         best_follower_action = None
         for follower_action in PROBLEM.ACTIONS[PROBLEM.FOLLOWER]:
@@ -73,23 +74,7 @@ class MILP:
         follower_decision_rule = np.identity(len(PROBLEM.ACTIONS[PROBLEM.FOLLOWER]))[best_follower_action]
         return (follower_decision_rule,max_value)
     
-    def calculate_follower_DR2(self,leader_decision_rule,state)-> list:
-        milp = Model("follower_action")
-        follower_DR = {}
-        for state in PROBLEM.STATES:
-            follower_DR[state] = self.milp.binary_var_list(len(PROBLEM.ACTIONS[PROBLEM.FOLLOWER]), name = [f"a1_u{i}_x{state}" for i in PROBLEM.ACTIONS[PROBLEM.LEADER]]) # type: ignore
-        
-        for follower_action in PROBLEM.ACTIONS[PROBLEM.FOLLOWER]:
-            value = 0
-            for leader_action in PROBLEM.ACTIONS[PROBLEM.LEADER]:
-                value += leader_decision_rule[leader_action] * self.beta.two_d_vectors[PROBLEM.FOLLOWER][state][PROBLEM.get_joint_action(leader_action,follower_action)]
-            if value > max_value:
-                max_value = value
-                best_follower_action = follower_action
-        # turn deterministic action to a decision rule 
-        follower_decision_rule = np.identity(len(PROBLEM.ACTIONS[PROBLEM.FOLLOWER]))[best_follower_action]
-        return (follower_decision_rule,max_value)
-                
+
 
 
 
@@ -100,11 +85,12 @@ class MILP:
         self.milp.export_as_lp(f"Stackelberg_LP")
 
         if sol:
+            # get the optimal leader DR from  solution docplex object
             optimal_leader_DR = self.milp.solution.get_value_list(leader_DR) # type: ignore
             optimal_follower_DR = {}
             optimal_follower_values = {}
 
-            # get values of optimal joint DR and optimal individual DRs from solution docplex object
+            # then calculate the followers value function for each state, depending on the leader actions. 
             for state in PROBLEM.STATES:
                 optimal_follower_DR[state], optimal_follower_values[state] = self.calculate_follower_DR(optimal_leader_DR,state)
                
