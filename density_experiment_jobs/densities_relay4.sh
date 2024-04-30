@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=75
-#SBATCH --time=36:00:00
+#SBATCH --cpus-per-task=100
+#SBATCH --time=48:00:00
 #SBATCH --error=error_file_relay4_densities.txt
 #SBATCH --job-name=relay4
 #SBATCH --mem=40G

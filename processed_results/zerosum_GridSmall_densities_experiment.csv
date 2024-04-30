@@ -1,0 +1,5 @@
+,State of the Art,State of the Art,State of the Art,Stackelberg,Stackelberg,Stackelberg
+,time,leader value,iteration,time,leader value,iteration
+GridSmall(1),0.06311893463134766,0.0,2,0.06721019744873047,0.0,2
+GridSmall(2),0.38053083419799805,0.0,2,1.036156177520752,0.0,2
+GridSmall(3),4.84484076499939,0.0,2,17.07663917541504,0.0,2

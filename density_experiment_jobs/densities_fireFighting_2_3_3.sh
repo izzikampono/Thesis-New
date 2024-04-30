@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=100
-#SBATCH --time=36:00:00
+#SBATCH --time=60:00:00
 #SBATCH --error=error_file_fireFighting_2_3_3.txt
 #SBATCH --job-name=fireFighting_2_3_3_densities
 #SBATCH --mem=25G

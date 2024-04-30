@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=100
-#SBATCH --time=36:00:00
+#SBATCH --time=50:00:00
 #SBATCH --error=error_file_longFireFight.txt
 #SBATCH --job-name=longFireFight
 #SBATCH --mem=25G
