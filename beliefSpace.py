@@ -14,14 +14,16 @@ gc.enable()
 
 class BeliefSpace:
     """Class that represents the Belief Space, a structure that maintains all belief states of the game.
-        The class keeps track of the mapping between belief states and its IDs.
-        It also maintains a network of belief ids that shows the connections between different belief ids bridged by action,observation pairs
-
+        - The class keeps track of the mapping between belief states and its IDs.
+        - It also maintains a network of belief ids that shows the connections between different belief ids bridged by action,observation pairs.
+        - the class also maintains a dictionary of the existing belief ids at a given timestep (time_index_table)
     """
     def __init__(self,horizon,density):
         self.horizon = horizon
         self.id = 1
         self.initial_belief = BeliefState(np.array(PROBLEM.GAME.b0)) 
+        self.monte_carlo_samples = 5000
+
         #set density
         self.density = density
 
@@ -30,7 +32,7 @@ class BeliefSpace:
 
         #initialize time_index_table dictionary that stores belief ids at every timestep as a set (so as to only keep unique ids)
         self.time_index_table = {0: set([0])}
-        for timestep in range(1,horizon+2): self.time_index_table[timestep] = set()
+        for timestep in range(1,horizon+1): self.time_index_table[timestep] = set()
 
         #initialize network that keeps track of connections between belief ids  
         self.network = {}
@@ -85,15 +87,29 @@ class BeliefSpace:
         else : 
             print("New belief encountered, improper sampling!")
             sys.exit()
+
+    def update_time_index_table(self,belief_id,next_belief_id):
+        for timestep in range(1,self.horizon-1):
+            if belief_id in self.time_index_table[timestep]:
+                self.time_index_table[timestep+1].add(next_belief_id)
+
+
     
 
 #===== public methods ===============================================================================================
 
     def size(self):
         "returns number of beliefs in the belief space"
-        return self.id+1
+        return self.id
+    
+    def size_at_horizon(self,horizon):
+        unique_belief_ids = set()
+        for timestep in range(horizon):
+            unique_belief_ids.union(self.time_index_table[timestep])
+        return len(unique_belief_ids)
     
     def set_density(self,density):
+        "function to externally set the density of the Belief Space object"
         self.density = density
     
     def get_belief(self,belief_id) -> BeliefState:
@@ -162,7 +178,7 @@ class BeliefSpace:
                     for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
                         if utilities.observation_probability(joint_observation,self.get_belief(current_belief_id),joint_action)>0:
                             # calculate next belief using joint_action and joint_observation
-                            original_next_belief = self.belief_dictionary[current_belief_id].next_belief(joint_action,joint_observation)
+                            original_next_belief = self.get_belief(current_belief_id).next_belief(joint_action,joint_observation)
                         
                             # check if the next belief state's is "sufficiently different"
                             if self.distance(original_next_belief):
@@ -182,6 +198,117 @@ class BeliefSpace:
 
                                 # add closest belief id to belief mapping at current timestep 
                                 self.time_index_table[timestep+1].add(existing_belief_id)
-        print(f"\tbelief expansion done with density = {self.density} , resulting belief space size = {self.size()}\n")
+        print(f"\tbelief expansion to horizon {self.horizon} done with density = {self.density} , resulting belief space size = {self.size()}\n")
+        return self
+
+    def monte_carlo_expansion(self):
+        """samples the belief space by using monte carlo sampling methods by sampling trajectories of games for a fixed horizon.
+           belief states that make up a given trajectory will be recorded and added to the bag of beliefs so long as it is "sufficiently different" from other belief states.  
+        
+        ## pseudo code : 
+            for _ in iterations :
+                ## to sample a single trajectory :: 
+                b = initial_belief
+                for t in [1,H-1]:
+                    u <= sample(joint_actions)
+                    z <= sample(joint_observations)
+                        if Pr(z|b,u)>0 :
+                            b_t+1 = Transition_fn(b_t,u,z)
+                            if sufficiently_different(b_t+1) : add b_t+1 to belief Space and network
+                            else : use an existing b_t+1 in the bag of beliefs
+                b <= b_t+1
+
+        """
+        for iters in range(self.monte_carlo_samples):
+            # print(f"{iters}/100")
+            current_belief_id = 0
+            for timestep in range(0,self.horizon-1):
+                joint_action = np.random.choice(PROBLEM.JOINT_ACTIONS)
+                joint_observation = np.random.choice(PROBLEM.JOINT_OBSERVATIONS,p=self.get_belief(current_belief_id).coniditioned_observation_distribution(joint_action))
+                if utilities.observation_probability(joint_observation,self.get_belief(current_belief_id),joint_action)>0:
+                    # calculate next belief using joint_action and joint_observation
+                    next_belief = self.belief_dictionary[current_belief_id].next_belief(joint_action,joint_observation)
+                
+                    # check if the new belief is sufficiently different and add to bag of beliefs
+                    next_belief_id = self.new_belief_subroutine(current_belief_id,next_belief,joint_action,joint_observation,timestep)
+                                    
+                    # update the connection in the time index table                 
+                    self.update_connections(current_belief_id,next_belief_id)
+
+                    # update current_belief_id for the next iteration
+                    current_belief_id = next_belief_id
+        print(f"\tMonte-Carlo belief expansion done with density = {self.density} , resulting belief space size = {self.size()}\n")
+
+    def add_samples(self,num_trajectories,density=None):
+        "function that samples more trajectories and newly encountered belief states into the bag of beliefs"
+
+        # if a density value is given, then set the density to the given value 
+        if density is not None : self.density = density
+
+        new_points = 0
+
+        for _ in range(num_trajectories):
+            current_belief_id = 0
+            for timestep in range(0,self.horizon-1):
+                current_belief = self.get_belief(current_belief_id)
+                joint_action = np.random.choice(PROBLEM.JOINT_ACTIONS)
+                joint_observation = np.random.choice(PROBLEM.JOINT_OBSERVATIONS,p=current_belief.coniditioned_observation_distribution(joint_action))
+                next_belief = current_belief.next_belief(joint_action,joint_observation)
+
+
+                # check if the calculated next_belief is sufficiently different and add to bag of beliefs, if not, get the closest belief 
+                next_belief_id = self.new_belief_subroutine(current_belief_id,next_belief,joint_action,joint_observation,timestep)
+                self.update_connections(current_belief_id,next_belief_id)
+
+                if next_belief_id == next_belief.id : new_points+=1
+
+                current_belief_id = next_belief_id
+        print(f"Added samples to the beleif space, with density ={self.density} , new belief space size = {self.size()} with {new_points} new belief points")
+        self.print_belief_table()
+        return self.size()
+
 
     
+
+    def new_belief_subroutine(self,current_belief_id,next_belief,joint_action,joint_observation,timestep):
+        """function that defines subroutines that deals with a new belief state
+            it first checks if the new belief state is sufficiently different from other belief states in the bag, given the density parameter that is set. 
+            if it is, then it is assigned a belief id and added to the network and the bag.
+            if it is not, we look for an existing belief in the bag that is closest in distance to the new belief state, and we use that beleif state instead.
+
+        """
+
+
+        # check if the next belief state's is "sufficiently different"
+        if self.distance(next_belief):
+            # add next belief to the bag of beliefs
+            next_belief_id = self.id 
+            self.add_network_connection(current_belief_id,joint_action,joint_observation,next_belief_id)
+            self.add_new_belief_in_bag(next_belief,timestep+1)
+
+        # if it is not sufficiently different, we use a stored belief state that is closest in distance to original_next_belief 
+        elif len(self.belief_dictionary):
+            # if there is no existing connection in the network, we add the new connection with an existing belief that is closest to the calculated belief 
+            if self.check_network_connection(current_belief_id,joint_action,joint_observation)==False:
+                _,next_belief_id = self.get_closest_belief(next_belief)
+                # add closest belief id to belief mapping at current timestep 
+                self.time_index_table[timestep+1].add(next_belief_id)
+                self.add_network_connection(current_belief_id,joint_action,joint_observation,next_belief_id)
+
+            
+            # if there is an existing connection, then we simply use the next belief from the existing network connection 
+            else:
+                next_belief_id = self.get_network_connection(current_belief_id,joint_action,joint_observation)
+                self.time_index_table[timestep+1].add(next_belief_id)
+
+
+       
+        return next_belief_id
+    
+
+    def update_connections(self,previous_belief_id,next_belief_id):
+        # print("UDPATING")
+        for timestep,belief_list in self.time_index_table.items():
+            if previous_belief_id in belief_list and timestep+1<self.horizon:
+                self.time_index_table[timestep+1].add(next_belief_id)
+                # print("connections updated")

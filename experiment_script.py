@@ -11,7 +11,7 @@ gc.enable()
 # sample code  : 
 # python experiment_script.py problem=dectiger horizon=10 iter=3
 # or
-# python experiment_script.py problem=dectiger horizon=10 iter=3 density=0.1
+# python experiment_script.py problem=dectiger horizon=3 iter=3 density=0.1
 
 if len(sys.argv) < 2:
     print("err0r : not enough arguments given")
@@ -44,7 +44,9 @@ else :
     experiment.run_experiments(density)
 experiment.generate_comparison_tables()
 experiment.generate_summary_table()
+
 experiment.horizon_value_plot()
+experiment.density_plot()
 experiment.plots()
 
 

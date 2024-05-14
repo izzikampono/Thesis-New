@@ -35,8 +35,9 @@ PROBLEM.initialize(DecPOMDP(file_name,horizon=planning_horizon))
 #configure experiment and run
 from experiment import Experiment
 experiment = Experiment(planning_horizon,num_iterations)
-experiment.run_experiment_decreasing_density(starting_density)
+experiment.run_experiments_decreasing_density(starting_density)
 experiment.generate_summary_table(densities=True)
-experiment.generate_comparison_tables(density = True)
-experiment.horizon_value_plot(density=True)
+experiment.generate_comparison_tables()
+experiment.horizon_value_plot(densities=True)
+experiment.density_plot()
 experiment.plots()

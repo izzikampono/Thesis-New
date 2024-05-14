@@ -15,14 +15,14 @@ import gc
 gc.enable()
 
 class ValueFunction:
-    def __init__(self,belief_space,gametype,sota=False):
+    def __init__(self,horizon,belief_space,gametype,sota=False):
         #change this to initialize belief space here
-        self.horizon = belief_space.horizon
+        self.horizon = horizon
         self.gametype = gametype
         self.belief_space = belief_space
         self.sota=sota
-        self.folower_value_fn = FollowerValueFunction(self.belief_space,gametype,sota)
-        self.leader_value_fn = LeaderValueFunction(self.belief_space,gametype,sota)
+        self.folower_value_fn = FollowerValueFunction(horizon,self.belief_space,gametype,sota)
+        self.leader_value_fn = LeaderValueFunction(horizon,self.belief_space,gametype,sota)
 
        
 #===== private methods ===============================================================================================
@@ -35,6 +35,9 @@ class ValueFunction:
 
 #===== public methods ===============================================================================================
 
+    def set_belief_space(self,belief_space):
+        self.belief_space = belief_space
+        
     def get_alpha_pairs(self,belief_id,timestep):
         return JointAlphaVector(self.leader_value_fn.get_vector_at_belief(belief_id,timestep),self.folower_value_fn.get_vector_at_belief(belief_id,timestep),belief_id)
     

@@ -10,9 +10,9 @@ gc.enable()
 
 
 class FollowerValueFunction:
-    def __init__(self,belief_space:BeliefSpace,gametype,sota) :
+    def __init__(self,horizon,belief_space:BeliefSpace,gametype,sota) :
         self.belief_space = belief_space
-        self.horizon = belief_space.horizon
+        self.horizon = horizon
         self.gametype = gametype
         self.sota=sota
         self.initialize_value_function()

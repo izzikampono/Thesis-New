@@ -29,6 +29,8 @@ def normalize(vector):
         print(f"cannot normalize vector V: {vector}")
         sys.exit()
 
+
+
 def observation_probability(joint_observation,belief,joint_action):
     """function to calculate probability of an observation given a belief and joint action"""
     sum=0
@@ -78,7 +80,7 @@ def MILP_solve(beta,belief,sota,gametype):
     else:
         if gametype=="zerosum":
             return zerosum_sota(belief,beta)
-        if gametype=="stackelberg":
+        if gametype=="generalsum":
             return stackelberg_sota(belief,beta)
         if gametype=="cooperative":
             return cooperative_sota(belief,beta)
@@ -98,11 +100,10 @@ def reconstruct_alpha_vectors(belief_id, beta, optimal_decision_rule) ->tuple[Al
                 vectors[PROBLEM.FOLLOWER][state] +=optimal_decision_rule.leader[leader_action] * optimal_decision_rule.follower[state][follower_action]  * beta.two_d_vectors[PROBLEM.FOLLOWER][state][joint_action] 
     return AlphaVector(optimal_decision_rule.leader,vectors[PROBLEM.LEADER],belief_id) , AlphaVector(optimal_decision_rule.follower,vectors[PROBLEM.FOLLOWER],belief_id)
 
-def exponential_decrease(start, num):
+def exponential_decrease(starting_value, num,factor = 5):
     "function to generate decreasing values to use as the density (hyperparameter) values for the expansion of the belief space. "
-    densities = []
-    value = start
-    for _ in range(num):
-        densities.append(value)
-        value /= 2
+    densities = [starting_value]
+    while len(densities)<num:
+        starting_value /= factor
+        densities.append(starting_value)
     return densities

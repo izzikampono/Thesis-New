@@ -1,0 +1,5 @@
+,State of the Art,State of the Art,State of the Art,Stackelberg,Stackelberg,Stackelberg
+,time,leader value,iteration,time,leader value,iteration
+prisoners(1),0.026629924774169922,-5.0,3,0.04107308387756348,-5.0,3
+prisoners(2),0.0853891372680664,-10.0,3,0.05114102363586426,-10.0,3
+prisoners(3),0.13428092002868652,-15.0,3,0.08237910270690918,-15.0,3

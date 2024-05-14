@@ -1,0 +1,66 @@
+horizon,gametype,SOTA,iterations,time,number_of_beliefs,leader values,follower values,density
+1,cooperative,Stackelberg,1,0.02611827850341797,3,9.0,[9. 9.],0.008
+1,cooperative,State of the Art,1,0.00014591217041015625,3,9.0,[9. 9.],0.008
+1,cooperative,Stackelberg,2,0.015604019165039062,4,9.0,[9. 9.],0.2
+1,cooperative,State of the Art,2,0.000141143798828125,4,9.0,[9. 9.],0.2
+1,cooperative,Stackelberg,3,0.01632213592529297,5,9.0,[9. 9.],0.04
+1,cooperative,State of the Art,3,0.0001347064971923828,5,9.0,[9. 9.],0.04
+1,zerosum,Stackelberg,1,0.018114089965820312,3,-75.0,[65.9375 84.0625],0.008
+1,zerosum,State of the Art,1,0.0200498104095459,3,-75.0,[84.0625 65.9375],0.008
+1,zerosum,Stackelberg,2,0.05156302452087402,3,-75.0,[65.9375 84.0625],0.2
+1,zerosum,State of the Art,2,0.022086143493652344,3,-75.0,[84.0625 65.9375],0.2
+1,zerosum,Stackelberg,3,0.01909613609313965,4,-75.0,[65.9375 84.0625],0.04
+1,zerosum,State of the Art,3,0.02013397216796875,4,-75.0,[84.0625 65.9375],0.04
+1,generalsum,Stackelberg,1,0.012396097183227539,3,30.0,[ 70. -15.],0.008
+1,generalsum,State of the Art,1,0.01329493522644043,3,30.0,[ 70. -15.],0.008
+1,generalsum,Stackelberg,2,0.035591840744018555,5,30.0,[ 70. -15.],0.2
+1,generalsum,State of the Art,2,0.031040191650390625,5,30.0,[ 70. -15.],0.2
+1,generalsum,Stackelberg,3,0.016330957412719727,5,30.0,[ 70. -15.],0.04
+1,generalsum,State of the Art,3,0.015919923782348633,5,30.0,[ 70. -15.],0.04
+2,cooperative,Stackelberg,1,0.06513810157775879,3,18.0,[18. 18.],0.008
+2,cooperative,State of the Art,1,0.0010762214660644531,3,18.0,[18. 18.],0.008
+2,cooperative,Stackelberg,2,0.08068299293518066,3,18.0,[18. 18.],0.2
+2,cooperative,State of the Art,2,0.0009369850158691406,3,18.0,[18. 18.],0.2
+2,cooperative,Stackelberg,3,0.059207916259765625,3,18.0,[18. 18.],0.04
+2,cooperative,State of the Art,3,0.001043081283569336,3,18.0,[18. 18.],0.04
+2,zerosum,Stackelberg,1,0.08317399024963379,3,-150.0,[150. 150.],0.008
+2,zerosum,State of the Art,1,0.08716130256652832,3,-150.0,[168.125 131.875],0.008
+2,zerosum,Stackelberg,2,0.08542823791503906,5,-150.0,[150. 150.],0.2
+2,zerosum,State of the Art,2,0.0912320613861084,5,-150.0,[168.125 131.875],0.2
+2,zerosum,Stackelberg,3,0.09461498260498047,5,-150.0,[150. 150.],0.04
+2,zerosum,State of the Art,3,0.12406706809997559,5,-150.0,[168.125 131.875],0.04
+2,generalsum,Stackelberg,1,0.07996296882629395,3,60.0,[140. -30.],0.008
+2,generalsum,State of the Art,1,0.08188796043395996,3,60.0,[140. -30.],0.008
+2,generalsum,Stackelberg,2,0.07667112350463867,4,60.0,[140. -30.],0.2
+2,generalsum,State of the Art,2,0.05412697792053223,4,60.0,[140. -30.],0.2
+2,generalsum,Stackelberg,3,0.058823347091674805,5,60.0,[140. -30.],0.04
+2,generalsum,State of the Art,3,0.05718088150024414,5,60.0,[140. -30.],0.04
+3,cooperative,Stackelberg,1,0.10454678535461426,3,27.0,[27. 27.],0.008
+3,cooperative,State of the Art,1,0.002908945083618164,3,27.0,[27. 27.],0.008
+3,cooperative,Stackelberg,2,0.12305212020874023,4,27.0,[27. 27.],0.2
+3,cooperative,State of the Art,2,0.0030362606048583984,4,27.0,[27. 27.],0.2
+3,cooperative,Stackelberg,3,0.12527704238891602,4,27.0,[27. 27.],0.04
+3,cooperative,State of the Art,3,0.003118276596069336,4,27.0,[27. 27.],0.04
+3,zerosum,Stackelberg,1,0.14638113975524902,3,-225.0,[234.0625 215.9375],0.008
+3,zerosum,State of the Art,1,0.14452385902404785,3,-225.0,[252.1875 197.8125],0.008
+3,zerosum,Stackelberg,2,0.14145302772521973,3,-225.0,[234.0625 215.9375],0.2
+3,zerosum,State of the Art,2,0.1489269733428955,3,-225.0,[252.1875 197.8125],0.2
+3,zerosum,Stackelberg,3,0.24780011177062988,5,-225.0,[234.0625 215.9375],0.04
+3,zerosum,State of the Art,3,0.23058795928955078,5,-225.0,[252.1875 197.8125],0.04
+3,generalsum,Stackelberg,1,0.11729907989501953,3,90.0,[210. -45.],0.008
+3,generalsum,State of the Art,1,0.10765385627746582,3,90.0,[210. -45.],0.008
+3,generalsum,Stackelberg,2,0.1205148696899414,4,90.0,[210. -45.],0.2
+3,generalsum,State of the Art,2,0.13401269912719727,4,90.0,[210. -45.],0.2
+3,generalsum,Stackelberg,3,0.26297807693481445,4,90.0,[210. -45.],0.04
+3,generalsum,State of the Art,3,0.12145113945007324,4,90.0,[210. -45.],0.04
+4,cooperative,Stackelberg,1,0.15523099899291992,3,36.0,[36. 36.],0.008
+4,cooperative,State of the Art,1,0.004889726638793945,3,36.0,[36. 36.],0.008
+4,cooperative,Stackelberg,2,0.1887810230255127,4,36.0,[36. 36.],0.2
+4,cooperative,State of the Art,2,0.005146026611328125,4,36.0,[36. 36.],0.2
+4,cooperative,Stackelberg,3,0.20742392539978027,5,36.0,[36. 36.],0.04
+4,cooperative,State of the Art,3,0.0053272247314453125,5,36.0,[36. 36.],0.04
+4,zerosum,Stackelberg,1,0.20662617683410645,3,-300.0,[318.125 281.875],0.008
+4,zerosum,State of the Art,1,0.21709704399108887,3,-300.0,[336.25 263.75],0.008
+4,zerosum,Stackelberg,2,0.32006311416625977,3,-300.0,[318.125 281.875],0.2
+4,zerosum,State of the Art,2,0.2107691764831543,3,-300.0,[336.25 263.75],0.2
+4,zerosum,Stackelberg,3,0.27486085891723633,5,-300.0,[318.125 281.875],0.04

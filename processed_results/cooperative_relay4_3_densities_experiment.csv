@@ -1,0 +1,6 @@
+,State of the Art,State of the Art,State of the Art,State of the Art,Stackelberg,Stackelberg,Stackelberg,Stackelberg
+,time,leader value,iteration,number_of_beliefs,time,leader value,iteration,number_of_beliefs
+relay4(1),0.00020313262939453125,-1.0,2,20,0.04169106483459473,-1.0,2,20
+relay4(2),0.0024619102478027344,-2.0,2,21,0.17484617233276367,-2.0,2,21
+relay4(3),0.010208845138549805,-3.0,2,20,0.3706529140472412,-3.0,2,20
+relay4(4),0.030023813247680664,-4.0,2,18,0.8181991577148438,-4.0,2,18

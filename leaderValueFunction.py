@@ -3,6 +3,7 @@ import time
 import numpy as np
 from alphaVector import AlphaVector
 from betaVector import BetaVector
+from beliefSpace import BeliefSpace
 from problem import PROBLEM
 PROBLEM = PROBLEM.get_instance()
 from utilities import *
@@ -11,9 +12,9 @@ gc.enable()
 
 
 class LeaderValueFunction:
-    def __init__(self,belief_space,gametype,sota) :
+    def __init__(self,horizon,belief_space : BeliefSpace,gametype,sota) :
         self.belief_space = belief_space
-        self.horizon = belief_space.horizon
+        self.horizon = horizon
         self.gametype = gametype
         self.sota=sota
         self.vector_sets = {}
@@ -69,13 +70,14 @@ class LeaderValueFunction:
                 # beta(x,u) = reward(x,u)
                 leader_beta[state][joint_action] = PROBLEM.REWARDS[self.gametype][PROBLEM.LEADER][joint_action][state]
 
+                # if statement for beta-vectors rooted at the last gamestage
                 if timestep+1 >= self.horizon : 
                     continue
-
                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
                     next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation) 
                     # check (joint_action,joint_observation) branch that leads to the next optimal alpha vector from the perspective of the leader 
                     if next_belief_id is not None:
+
                         for next_state in PROBLEM.STATES:
                             # beta(x,u) += \sum_{z} \sum_{y} DYNAMICS(u,z,x,y) * next_optimal_alpha(u,z)[y]
                             leader_beta[state][joint_action] += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] * self.vector_sets[timestep+1][next_belief_id].vector[state]

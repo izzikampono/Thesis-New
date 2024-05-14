@@ -23,8 +23,9 @@ class PROBLEM:
         self.JOINT_OBSERVATIONS = [i for i in range(len(problem.joint_observations))]
         self.TRANSITION_FUNCTION = problem.transition_fn
         self.OBSERVATION_FUNCTION = problem.observation_fn
-        self.REWARDS = self.initialize_rewards()
+        # self.REWARDS = self.initialize_rewards()
         self.GAME.reset()
+        self.initialize_rewards()
         self.action_dictionary={}
         n=0
         for leader_action in self.ACTIONS[0]:
@@ -53,14 +54,65 @@ class PROBLEM:
             for state in self.STATES:
                 stackelberg_follower_reward[joint_action][state]+=random.randint(min_NUM, max_NUM)
         return stackelberg_follower_reward
+
+    def dectiger_reward(self):
+
+        return np.zeros(np.size(self.GAME.reward_fn_sa))
+
     
     def initialize_rewards(self):
         #Competitive reward matrix indexed by joint actions
         self.REWARDS = { "cooperative" : [self.GAME.reward_fn_sa,self.GAME.reward_fn_sa],
                     "zerosum" : [self.GAME.reward_fn_sa,self.GAME.reward_fn_sa*-1],
-                    "stackelberg" :[self.GAME.reward_fn_sa,self.follower_stackelberg_reward()]
+                    "generalsum" :[self.GAME.reward_fn_sa,self.follower_stackelberg_reward()]
                     }
-        return self.REWARDS
+        
+        # custom made general sum game rewards :: 
+
+        if self.NAME == "dectiger":
+            self.REWARDS["generalsum"] = [
+                    # first player general sum reward
+                    np.array([[-2., -2.],
+                            [-40., 50.],
+                            [-4., -4.],
+                            [-100., 60.],
+                            [-50., 70.],
+                            [-100., 60.],
+                            [25., -20.],
+                            [-15., 30.],
+                            [30., -20.]]),
+                    # second player general sum reward :
+                    np.array([[-2., -2.],
+                            [-20., 25.],
+                            [60., -100.],
+                            [-4., -4.],
+                            [-20., 30.],
+                            [60., -100.],
+                            [50., -40.],
+                            [30., -15.],
+                            [70., -50.]]),
+            ]
+        if self.NAME == "broadcastChannel":
+            self.REWARDS["generalsum"] = [np.array(
+                # first player general sum reward
+                [[-1., -1., 0., -2.],
+                [0., 0., 2., 2.],
+                [0., 1., 0., 1.],
+                [0., 0., 0., -1.]]),
+                
+                # second player general sum reward
+                np.array(
+                [[-1., 0., -1., -2.],
+                [0., 0., 1., 1.],
+                [0., 2., 0., 2.],
+                [0., 0., 0., -1.]]),
+            ]
+        
+
+      
+                                  
+            
+
 
 #===== public methods ===============================================================================================
     @classmethod

@@ -1,15 +1,25 @@
 import numpy as np 
 import sys
-from utilities import normalize
+from utilities import normalize,observation_probability
 from problem import PROBLEM
 PROBLEM = PROBLEM.get_instance()
 
 class BeliefState:
+    """Class that represents a Belief State object in a given game
+
+        Attributes ::
+        - value = vector of belief values over states x \in X
+        - id = the id that corresponds to this BeliefState object, the id is used to keep track of belief states object in the Belief Space
+       
+    
+    
+    
+    """
     def __init__(self,value,action_label=None,observation_label=None,id=None):
         self.value = value
         self.id = id
-        self.action_label = action_label
-        self.observation_label = observation_label
+        # self.action_label = action_label
+        # self.observation_label = observation_label
 
     def set_id(self,id):
         self.id=id
@@ -63,6 +73,14 @@ class BeliefState:
         # normalize
         next_belief_value = self.normalize(next_belief_value)
         return BeliefState(next_belief_value,joint_action,joint_observation)
+    
+
+    def coniditioned_observation_distribution(self,joint_action):
+        """builds the probability distribution of observations conditioned on the current belief state and joint action"""
+        observation_distribution = []
+        for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
+            observation_distribution.append(observation_probability(joint_observation,self,joint_action))
+        return np.array(observation_distribution)
 
     def print(self):
         print(self.value)
