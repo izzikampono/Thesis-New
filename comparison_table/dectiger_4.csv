@@ -1,5 +1,6 @@
 ,cooperative,cooperative,zerosum,zerosum,generalsum,generalsum
 ,State of the Art Leader Value,Stackelberg Leader Value,State of the Art Leader Value,Stackelberg Leader Value,State of the Art Leader Value,Stackelberg Leader Value
-0,0.0,0.0,-5.0,-5.0,-6.538461538461538,-6.538461538461538
-1,0.0,0.0,-10.0,-10.0,-6.846153846153846,-6.846153846153846
-2,0.0,0.0,-15.0,-15.0,-7.153846153846153,-7.153846153846153
+0,9.0,9.0,-75.0,-75.0,30.0,30.0
+1,18.0,18.0,-150.0,-150.0,60.0,60.0
+2,27.0,27.0,-225.0,-225.0,90.0,90.0
+3,36.0,36.0,-300.0,-300.0,120.0,120.0

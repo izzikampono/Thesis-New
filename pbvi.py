@@ -129,7 +129,6 @@ class  PBVI:
                             # get reward component :: r(x,u) * a(u_joint) * b(x)
                             state_action_value = PROBLEM.REWARDS["generalsum"][agent][joint_action][state]  * self.value_function.belief_space.get_belief(belief_id).value[state] * joint_action_probability
                             
-                           
                             if timestep+1 < self.horizon:
                                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
                                     # next_belief = Transtition(b,u,z)

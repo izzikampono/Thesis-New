@@ -44,7 +44,6 @@ else :
     experiment.run_experiments(density)
 experiment.generate_comparison_tables()
 experiment.generate_summary_table()
-
 experiment.horizon_value_plot()
 experiment.density_plot()
 experiment.plots()

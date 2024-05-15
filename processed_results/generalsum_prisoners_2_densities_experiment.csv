@@ -1,0 +1,5 @@
+,State of the Art,State of the Art,State of the Art,State of the Art,Stackelberg,Stackelberg,Stackelberg,Stackelberg
+,time,leader value,iteration,number_of_beliefs,time,leader value,iteration,number_of_beliefs
+prisoners(1),0.01017904281616211,-6.538461538461538,4,2,0.010987997055053711,-6.538461538461538,4,2
+prisoners(2),0.03713393211364746,-6.846153846153846,4,2,0.03364300727844238,-6.846153846153846,4,2
+prisoners(3),0.06407880783081055,-7.153846153846153,4,2,0.07101202011108398,-7.153846153846153,4,2

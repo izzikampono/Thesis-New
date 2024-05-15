@@ -1,0 +1,6 @@
+,State of the Art,State of the Art,State of the Art,State of the Art,Stackelberg,Stackelberg,Stackelberg,Stackelberg
+,time,leader value,iteration,number_of_beliefs,time,leader value,iteration,number_of_beliefs
+dectiger(1),0.000164031982421875,9.0,2,4,0.03452801704406738,9.0,2,4
+dectiger(2),0.0010831356048583984,18.0,2,4,0.08464193344116211,18.0,2,4
+dectiger(3),0.0039141178131103516,27.0,2,4,0.26596498489379883,27.0,2,4
+dectiger(4),0.007151126861572266,36.0,2,4,0.23258709907531738,36.0,2,4

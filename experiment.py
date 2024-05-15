@@ -164,10 +164,12 @@ class Experiment():
                 self.add_to_database(gametype,horizon,sota,iter+1,time,self.game.value_function.belief_space.size(),value[0],value[1],densities[iter-1])
                 self.export_database(experiment_type="densities")
 
+              
+
                 # store policy from last iteration
                 if iter ==self.iterations-1 : self.policies[gametype][horizon][sota] = copy.deepcopy(self.game.value_function)
-
-   
+            
+            
         
         return
     
@@ -195,14 +197,20 @@ class Experiment():
     def run_experiments_decreasing_density(self,starting_density):
         """run experiments for all benchmarks of a fixed problem with decreasing densities at each iterations (all gametypes and sota mode)"""
         
+        # initialize densities and belief space to be used 
         densities = exponential_decrease(starting_density,self.iterations)
-        original_belief_space = BeliefSpace(self.planning_horizon,densities[0]).expansion()
+        original_belief_space = BeliefSpace(self.planning_horizon,densities[0])
+
+        original_belief_space.monte_carlo_expansion()
+
         for horizon in range(1,self.planning_horizon+1):
             for gametype in ["cooperative","zerosum","generalsum"]:
                 self.policies[gametype][horizon] = {}
                 
                 # reset the belief space before running different benchmarks 
                 self.run_single_experiment_set_densities(horizon,copy.deepcopy(original_belief_space),gametype,densities)
+            
+            self.density_plot(horizon)
             # construct stackelberg comparison matrix and export 
             self.construct_stackelberg_comparison_matrix(horizon)
 
@@ -337,22 +345,28 @@ class Experiment():
         plt.show(block=False)
 
      
-    def horizon_value_plot(self,densities = False):
+    def horizon_value_plot(self,timestep=False,densities = False):
         bar_width = 0.35
         fig, axs = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
+        data = pd.DataFrame(self.database)
+
+        if timestep == False: timestep =self.planning_horizon
         for id,gametype in enumerate(["cooperative","generalsum","zerosum"]):
             
-            horizons = np.arange(self.planning_horizon,step=1)
+            horizons = np.arange(timestep,step=1)
             sota_values = []
             non_sota_values = []
             x_labels = []
             colors = ['darkblue', 'maroon']
 
-            for horizon in range(1,self.planning_horizon+1):
-                data = self.database[(self.database["gametype"]==gametype) & (self.database["horizon"]==horizon)]
+            for timestep in range(1,timestep+1):
+                # data selection
+                data = self.database[(self.database["gametype"]==gametype) & (self.database["horizon"]==timestep)]
+                
+                # get leader values from different solve methods
                 sota_values.append(np.average([value for value in  data["leader values"][data["SOTA"]=="State of the Art"].to_numpy()]))
                 non_sota_values.append(np.average([value for value in  data["leader values"][data["SOTA"]=="Stackelberg"].to_numpy()]))
-                x_labels.append(horizon)
+                x_labels.append(timestep)
 
             # plotting
             axs[id].bar(horizons, sota_values, bar_width, label='Stackelberg',color=colors[0])
@@ -373,10 +387,10 @@ class Experiment():
         # Adjust layout
         plt.tight_layout(rect=[0.05, 0.05, 0.95, 0.95])  # Adjust the rect parameter as needed
 
-        if densities == False : plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({self.planning_horizon}).png")
-        else : plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({self.planning_horizon}_densities.png")
+        if densities == False : plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({timestep}).png")
+        else : plt.savefig(f"horizon_plot/{PROBLEM.NAME}_({timestep}_densities.png")
         plt.show(block=False)
-        plt.pause(8)
+        plt.pause(5)
         plt.close('all')
         return
 
@@ -387,14 +401,20 @@ class Experiment():
         fig, axs = plt.subplots(3, 1, figsize=(9, 7))
         colors = ['darkblue', 'maroon']
         bar_width = 0.25
+        data = pd.DataFrame(self.database)
 
-        if horizon is  None : horizon = self.planning_horizon
+        if horizon is None : horizon = self.planning_horizon
 
-        for idx, gametype in enumerate(["cooperative", "generalsum", "zerosum"]):
-            data = self.database[(self.database["gametype"] == gametype) & (self.database["horizon"] == horizon)]
-            belief_sizes = data["number_of_beliefs"][data["SOTA"] == "State of the Art"].to_numpy()
-            sota_leader_values = data["leader values"][data["SOTA"] == "State of the Art"].to_numpy()
-            non_sota_leader_values = data["leader values"][data["SOTA"] == "Stackelberg"].to_numpy()
+        for idx, gametype in enumerate(["cooperative", "zerosum", "generalsum"]):
+            # select data 
+            current_data = data[(data["gametype"] == gametype) & (data["horizon"] == horizon)]
+            
+            # get belief sizes used during solving of each gametype
+            belief_sizes = current_data["number_of_beliefs"][current_data["SOTA"] == "State of the Art"].to_numpy()
+            
+            # get leader values from different solve methods
+            sota_leader_values = current_data["leader values"][current_data["SOTA"] == "State of the Art"].to_numpy()
+            non_sota_leader_values = current_data["leader values"][current_data["SOTA"] == "Stackelberg"].to_numpy()
             axs[idx].set_title(f"{gametype}")
 
             print(f"belief size: {belief_sizes},\n sota values: {sota_leader_values},\n non-sota values: {non_sota_leader_values}")
@@ -410,13 +430,14 @@ class Experiment():
             axs[idx].set_xticklabels(belief_sizes)
             axs[idx].set_xlabel("Belief space size")
 
+        plt.legend()
 
+        fig.suptitle(f"Belief size plot for {PROBLEM.NAME}, Horizon = {horizon})")
 
         fig.text(0.05, 0.5, 'leader value', ha='center', va='center', rotation='vertical')
         plt.tight_layout(rect=[0.05, 0.05, 0.95, 0.95])  # Adjust the rect parameter as needed
-        plt.show()
+
 
         # if statements for saving the resulting plot depending on the experiment type 
-        plt.savefig(f"density_plot/{PROBLEM.NAME}_({self.planning_horizon})_{self.iterations}.png")
+        plt.savefig(f"density_plot/{PROBLEM.NAME}_({horizon})_{self.iterations}.png")
         
-        plt.show(block=False)
