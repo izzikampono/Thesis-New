@@ -37,6 +37,9 @@ class BeliefSpace:
         #initialize network that keeps track of connections between belief ids  
         self.network = {}
 
+        #buffer mechanism that keeps track of new connections to be added to the network
+        self.update_connection_buffer = []
+
 
 #===== private methods ===============================================================================================
     
@@ -95,6 +98,18 @@ class BeliefSpace:
 
 
 #===== public methods ===============================================================================================
+
+    def add_to_buffer(self,current_belief_id,next_belief_id):
+        self.update_connection_buffer.append((current_belief_id,next_belief_id))
+
+    def empty_buffer(self):
+
+        #add all connections in the buffer to the network
+        for connection in self.update_connection_buffer:
+            self.update_connections(connection[0],connection[1])
+
+        #reset buffer
+        self.update_connection_buffer=[]
 
     def size(self) -> int:
         "returns number of beliefs in the belief space"
@@ -158,11 +173,11 @@ class BeliefSpace:
              
 
             # update network connections 
-            self.update_connections(current_belief_id,next_belief_id)
+            self.add_to_buffer(current_belief_id,next_belief_id)
 
             return next_belief_id,new_belief_flag
         
-        return None
+        return None,None
     
     def print_belief_table(self):
         for timestep in range(self.horizon):

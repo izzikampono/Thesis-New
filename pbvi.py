@@ -44,6 +44,7 @@ class  PBVI:
                 self.value_function.backup(belief_id,timestep)
 
                 n+=1
+            self.value_function.belief_space.empty_buffer()
         
         # terminal result printing
         leader_value , follower_value = self.value_function.get_initial_value()
