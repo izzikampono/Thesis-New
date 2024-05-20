@@ -8,6 +8,7 @@ from problem import PROBLEM
 PROBLEM = PROBLEM.get_instance()
 from utilities import *
 import gc
+import sys
 gc.enable()
 
 
@@ -74,11 +75,17 @@ class LeaderValueFunction:
                 if timestep+1 >= self.horizon : 
                     continue
                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
-                    next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation) 
+                    next_belief_id,flag = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation,timestep) 
                     # check (joint_action,joint_observation) branch that leads to the next optimal alpha vector from the perspective of the leader 
                     if next_belief_id is not None:
 
                         for next_state in PROBLEM.STATES:
                             # beta(x,u) += \sum_{z} \sum_{y} DYNAMICS(u,z,x,y) * next_optimal_alpha(u,z)[y]
-                            leader_beta[state][joint_action] += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] * self.vector_sets[timestep+1][next_belief_id].vector[state]
+                            try:
+                                leader_beta[state][joint_action] += PROBLEM.TRANSITION_FUNCTION[joint_action][state][next_state] * PROBLEM.OBSERVATION_FUNCTION[joint_action][state][joint_observation] * self.vector_sets[timestep+1][next_belief_id].vector[state]
+                            except:
+                                print(f"CANNOT FIND {next_belief_id}")
+                                print(f"{self.belief_space.time_index_table}")
+                                print(f"{self.vector_sets.items()}")
+                                sys.exit()
         return leader_beta

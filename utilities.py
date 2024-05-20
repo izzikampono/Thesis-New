@@ -12,7 +12,6 @@ from SOTAStrategy import *
 
 
 __all__ = ["normalize","observation_probability","get_blind_beta","MILP_solve","reconstruct_alpha_vectors","exponential_decrease"]
-__author__ = "Isabelle Kampono"
 __version__ = "0.1.0"
 
 PROBLEM = PROBLEM.get_instance()
@@ -32,7 +31,16 @@ def normalize(vector):
 
 
 def observation_probability(joint_observation,belief,joint_action):
-    """function to calculate probability of an observation given a belief and joint action"""
+    """function to calculate probability of an observation given a belief and joint action
+    
+        Pseudo-code :
+
+        observation_probability = 0
+        for x in X:
+            for y in X:
+                observation_probability += b(x) * Transition_fn(u,x,y) * Observation_fn(u,x,z)     
+    """
+
     sum=0
     for state in PROBLEM.STATES:
         for next_state in PROBLEM.STATES:
@@ -40,18 +48,29 @@ def observation_probability(joint_observation,belief,joint_action):
     return sum
 
 def get_blind_beta():
-    """ build beta vector for blind opponent (only uses current reward without an expectation of future reward """
+    """ build beta vector for blind opponent (only uses current reward without an expectation of future rewards """
+
     reward = PROBLEM.REWARDS["stackelberg"]
     two_d_vector = np.zeros((len(PROBLEM.STATES),len(PROBLEM.JOINT_ACTIONS)))
+
     for state in PROBLEM.STATES:
         for joint_action in PROBLEM.JOINT_ACTIONS:
             # get reward of follower agent for each action,state value
-            two_d_vector[state][joint_action] = reward[1][joint_action][state]
+            two_d_vector[state][joint_action] = reward[PROBLEM.LEADER][joint_action][state]
     return two_d_vector
 
 def get_joint_DR(leader_decision_rule,follower_decision_rule):
-    """function to caculate the joint decision rule from individual decision rules"""
+    """function to caculate the joint decision rule from individual decision rules
+        for x in X:
+            for u1 in U1:
+                for u2 in U2 :
+                    joint_DR = a1(u1) * a2(u2)
+
+    """
+
+    # initialize
     joint_decision_rule = {}
+
     for state in PROBLEM.STATES:
         joint_decision_rule[state] = np.zeros(len(PROBLEM.JOINT_ACTIONS))
         for leader_action,leader_action_probability in enumerate(leader_decision_rule):
@@ -87,7 +106,6 @@ def MILP_solve(beta,belief,sota,gametype):
     return leader_value,follower_value,decision_rule
 
 
-## change this to use individual DRs instead of joint 
 
 def reconstruct_alpha_vectors(belief_id, beta, optimal_decision_rule) ->tuple[AlphaVector]:
     "function to reconstruct an alpha vector by using the beta constructed on the belief_id and the optimal decision rule from the linear programs "

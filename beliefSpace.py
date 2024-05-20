@@ -88,24 +88,23 @@ class BeliefSpace:
             print("New belief encountered, improper sampling!")
             sys.exit()
 
-    def update_time_index_table(self,belief_id,next_belief_id):
-        for timestep in range(1,self.horizon-1):
-            if belief_id in self.time_index_table[timestep]:
-                self.time_index_table[timestep+1].add(next_belief_id)
+    # def update_time_index_table(self,belief_id,next_belief_id):
+    #     for timestep in range(1,self.horizon-1):
+    #         if belief_id in self.time_index_table[timestep]:
+    #             self.time_index_table[timestep+1].add(next_belief_id)
 
-
-    
 
 #===== public methods ===============================================================================================
 
-    def size(self):
+    def size(self) -> int:
         "returns number of beliefs in the belief space"
         return self.id
     
     def size_at_horizon(self,horizon):
+        """function that returns the number of unique belief ids up to a certain timestep"""
         unique_belief_ids = set()
-        for timestep in range(horizon):
-            unique_belief_ids.union(self.time_index_table[timestep])
+        for timestep in range(horizon+1):
+            unique_belief_ids = unique_belief_ids.union(self.time_index_table[timestep])
         return len(unique_belief_ids)
     
     def set_density(self,density):
@@ -136,12 +135,33 @@ class BeliefSpace:
         self.network = {}
         return self
     
-    def existing_next_belief_id(self,current_belief_id,joint_action,joint_observation) -> Union[int,None]:
+    def existing_next_belief_id(self,current_belief_id,joint_action,joint_observation,timestep) -> Union[int,None]:
         """function to retrieve an existing network connection from belief_id to next_belief_id using an action,observation key"""
+        new_belief_flag = None
+
         # check if there is a connection with the (u,z) branch and check if Pr(z|b,u)>0
         if self.check_network_connection(current_belief_id,joint_action,joint_observation) and utilities.observation_probability(joint_observation, self.get_belief(current_belief_id),joint_action)>0:
-           return self.network[current_belief_id][joint_action][joint_observation]
-         
+           new_belief_flag = False
+           return self.network[current_belief_id][joint_action][joint_observation],new_belief_flag
+        
+        #if there is no connection in the network, manually calculate the next belief and add it to the belief space
+        if self.check_network_connection(current_belief_id,joint_action,joint_observation) == False and utilities.observation_probability(joint_observation, self.get_belief(current_belief_id),joint_action)>0:
+            
+            # manually calculate next belief
+            next_belief = self.get_belief(current_belief_id).next_belief(joint_action,joint_observation)
+
+            #checks distance and adds to belief space 
+            next_belief_id = self.new_belief_subroutine(current_belief_id,next_belief,joint_action,joint_observation,timestep)
+            
+            # if statement to set value of boolean variable that tells us whether the calculated next belief is used or if a "closer" belief state already exists 
+            new_belief_flag = True
+             
+
+            # update network connections 
+            self.update_connections(current_belief_id,next_belief_id)
+
+            return next_belief_id,new_belief_flag
+        
         return None
     
     def print_belief_table(self):
@@ -220,7 +240,6 @@ class BeliefSpace:
 
         """
         for iters in range(self.monte_carlo_samples):
-            # print(f"{iters}/100")
             current_belief_id = 0
             for timestep in range(0,self.horizon-1):
                 joint_action = np.random.choice(PROBLEM.JOINT_ACTIONS)
@@ -270,7 +289,7 @@ class BeliefSpace:
 
     
 
-    def new_belief_subroutine(self,current_belief_id,next_belief,joint_action,joint_observation,timestep):
+    def new_belief_subroutine(self,current_belief_id,next_belief,joint_action,joint_observation,timestep) -> int:
         """function that defines subroutines that deals with a new belief state
             it first checks if the new belief state is sufficiently different from other belief states in the bag, given the density parameter that is set. 
             if it is, then it is assigned a belief id and added to the network and the bag.
@@ -288,19 +307,17 @@ class BeliefSpace:
 
         # if it is not sufficiently different, we use a stored belief state that is closest in distance to original_next_belief 
         elif len(self.belief_dictionary):
-            # if there is no existing connection in the network, we add the new connection with an existing belief that is closest to the calculated belief 
+            # if there is no existing connection in the network, we add a new connection with an existing belief that is closest to the calculated belief 
             if self.check_network_connection(current_belief_id,joint_action,joint_observation)==False:
                 _,next_belief_id = self.get_closest_belief(next_belief)
                 # add closest belief id to belief mapping at current timestep 
                 self.time_index_table[timestep+1].add(next_belief_id)
                 self.add_network_connection(current_belief_id,joint_action,joint_observation,next_belief_id)
 
-            
             # if there is an existing connection, then we simply use the next belief from the existing network connection 
             else:
                 next_belief_id = self.get_network_connection(current_belief_id,joint_action,joint_observation)
                 self.time_index_table[timestep+1].add(next_belief_id)
-
 
        
         return next_belief_id

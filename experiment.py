@@ -115,13 +115,13 @@ class Experiment():
             for sota in [True,False]:
                 print(f"\t\t\t Solving {gametype} {PROBLEM.NAME} GAME Horizon {horizon} WITH SOTA = {self.game.value_function.sota}  ")
                 print(f"iteration : {iter}")
-                value,time = self.game.solve_game(sota) 
+                value,time,belief_space_size = self.game.solve_game(sota) 
                 leader_values.append(value[PROBLEM.LEADER])
                 follower_values.append(value[PROBLEM.FOLLOWER])
                 times.append(time)
 
                 # add results to database
-                self.add_to_database(gametype,horizon,sota,iter+1,time,self.game.value_function.belief_space.size(),value[0],value[1],density)
+                self.add_to_database(gametype,horizon,sota,iter+1,time,belief_space_size,value[0],value[1],density)
                 self.export_database(experiment_type="densities")
 
                 #add samples to the belief space for the next iteration
@@ -133,38 +133,27 @@ class Experiment():
         # extract policy from the last iteration
         return leader_values,follower_values,times
     
-    def run_single_experiment_set_densities(self,horizon,belief_space,gametype:string,densities : list):
+    def run_single_experiment_set_densities(self,horizon,belief_spaces,gametype:string,densities : list):
         """function to run a single experiemnt with one type of benchmark (problem,gametype) for a given number of iterations.
             at each iteration, the algorithm chooses a corresponding value from the densities argument. 
         """
         
-        # initialize list to hold values at initial belief and time for each iteration
-        
-        times = []
-        self.initialize_game(horizon,gametype,belief_space)
-
-        #initialize game with gametype and sota 
+        self.initialize_game(horizon,gametype,belief_spaces[0])
        
         for iter in range(0,self.iterations):
-            # add samples to the belief space for the next iteration
-            if iter>0: self.game.value_function.belief_space.add_samples(30,densities[iter])
 
-            # reset value function at each iteration, but make sure to use the same belief space 
-            self.game.reset_value_function(self.game.value_function.belief_space)
+            # reset value function at each iteration, and use the correct belief space 
+            self.game.reset_value_function(belief_space=belief_spaces[iter])
             for sota in [False,True]:
                 print(f"\t\t\t Solving {gametype} {PROBLEM.NAME} GAME Horizon {self.game.value_function.horizon} WITH SOTA = {self.game.value_function.sota} , Belief space size = {self.game.value_function.belief_space.size()}")
                 print(f"iteration : {iter}")
 
                 #solve game 
-                value ,time = self.game.solve_game(sota) #type:ignore
-        
-                times.append(time)
+                value ,time,belief_space_size = self.game.solve_game(sota) #type:ignore
 
                 # add results to database
-                self.add_to_database(gametype,horizon,sota,iter+1,time,self.game.value_function.belief_space.size(),value[0],value[1],densities[iter-1])
+                self.add_to_database(gametype,horizon,sota,iter+1,time,belief_space_size,value[0],value[1],densities[iter])
                 self.export_database(experiment_type="densities")
-
-              
 
                 # store policy from last iteration
                 if iter ==self.iterations-1 : self.policies[gametype][horizon][sota] = copy.deepcopy(self.game.value_function)
@@ -186,9 +175,9 @@ class Experiment():
                 # run game with set number of iterations
                 self.run_single_experiment(horizon,copy.deepcopy(original_belief_space),gametype,density)
 
-                # save the value functions of each game  (will be used to evaluate the policy or get the value of the game )
             # construct stackelberg comparison matrix and export 
             self.construct_stackelberg_comparison_matrix(horizon)
+            
         # save databse as a csv file
         self.export_database(current_horizon=horizon)
         self.database = pd.DataFrame(self.database)
@@ -197,18 +186,30 @@ class Experiment():
     def run_experiments_decreasing_density(self,starting_density):
         """run experiments for all benchmarks of a fixed problem with decreasing densities at each iterations (all gametypes and sota mode)"""
         
-        # initialize densities and belief space to be used 
+        # initialize densities and belief space to be used in each iteration
         densities = exponential_decrease(starting_density,self.iterations)
-        original_belief_space = BeliefSpace(self.planning_horizon,densities[0])
 
+        # initialize belief space 
+        original_belief_space = BeliefSpace(self.planning_horizon,densities[0])
         original_belief_space.monte_carlo_expansion()
 
         for horizon in range(1,self.planning_horizon+1):
+
+            #expand belief space to be used at each iteration 
+            belief_space = original_belief_space
+            belief_spaces = [belief_space]
+            for iter in range(1,self.iterations):
+                next_belief_space = copy.deepcopy(belief_space)
+                next_belief_space.add_samples(30,densities[iter])
+                belief_spaces.append(next_belief_space)
+                belief_space = next_belief_space
+
+            # loop through different gametypes with differen reward functions 
             for gametype in ["cooperative","zerosum","generalsum"]:
                 self.policies[gametype][horizon] = {}
                 
                 # reset the belief space before running different benchmarks 
-                self.run_single_experiment_set_densities(horizon,copy.deepcopy(original_belief_space),gametype,densities)
+                self.run_single_experiment_set_densities(horizon,belief_spaces,gametype,densities)
             
             self.density_plot(horizon)
             # construct stackelberg comparison matrix and export 

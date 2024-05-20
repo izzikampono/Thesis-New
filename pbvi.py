@@ -38,7 +38,8 @@ class  PBVI:
             print(f"\n========== Backup at timestep {timestep} ==========")
             # loop through all beliefs at a given timestep
             n = 1
-            for belief_id in self.value_function.belief_space.time_index_table[timestep]:
+            belief_list = self.value_function.belief_space.time_index_table[timestep]
+            for belief_id in belief_list:
                 print(f"\t\tbelief id : {belief_id} - {n} / {len(self.value_function.belief_space.time_index_table[timestep])} ")
                 self.value_function.backup(belief_id,timestep)
 
@@ -82,7 +83,7 @@ class  PBVI:
         values = self.backward_induction()
         
         # return policy, value at the initial belief and the time it took to solve the game 
-        return values, time.time() - start_time
+        return values, time.time() - start_time , self.value_function.belief_space.size_at_horizon(self.horizon)
    
   
     
@@ -132,7 +133,7 @@ class  PBVI:
                             if timestep+1 < self.horizon:
                                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
                                     # next_belief = Transtition(b,u,z)
-                                    next_belief_id = self.value_function.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation)
+                                    next_belief_id,flag = self.value_function.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation,timestep)
                                     if next_belief_id is not None:
                                         for next_state in PROBLEM.STATES :
                                        

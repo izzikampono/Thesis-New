@@ -68,7 +68,7 @@ class FollowerValueFunction:
                 if timestep+1 >= self.horizon : continue
                 
                 for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
-                    next_belief_id = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation) 
+                    next_belief_id,flag = self.belief_space.existing_next_belief_id(belief_id,joint_action,joint_observation,timestep) 
                     # check (joint_action,joint_observation) branch that leads to the next optimal alpha vector from the perspective of the leader 
                     if next_belief_id is not None:
                         for next_state in PROBLEM.STATES:
