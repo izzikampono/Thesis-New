@@ -71,7 +71,7 @@ class PROBLEM:
 
         if self.NAME == "dectiger":
             self.REWARDS["generalsum"] = [
-                    # first player general sum reward
+                    # leader general sum reward
                     np.array([[-2., -2.],
                             [-40., 50.],
                             [-4., -4.],
@@ -81,7 +81,7 @@ class PROBLEM:
                             [25., -20.],
                             [-15., 30.],
                             [30., -20.]]),
-                    # second player general sum reward :
+                    # follower general sum reward :
                     np.array([[-2., -2.],
                             [-20., 25.],
                             [60., -100.],
@@ -93,20 +93,33 @@ class PROBLEM:
                             [70., -50.]]),
             ]
         if self.NAME == "broadcastChannel":
-            self.REWARDS["generalsum"] = [np.array(
-                # first player general sum reward
-                [[-1., -1., 0., -2.],
-                [0., 0., 2., 2.],
-                [0., 1., 0., 1.],
-                [0., 0., 0., -1.]]),
-                
-                # second player general sum reward
-                np.array(
-                [[-1., 0., -1., -2.],
-                [0., 0., 1., 1.],
-                [0., 2., 0., 2.],
-                [0., 0., 0., -1.]]),
-            ]
+            self.REWARDS["generalsum"] = [
+                                    # leader reward 
+                                    np.array([[-1,-1,-1,-2],
+                                    [0,0,1,1],
+                                    [-1,0,-1,0],
+                                    [0,0,0,0]
+                                    ]),
+
+                                    #follower reward
+                                    np.array([[-1,-1,-1,-2],
+                                    [-1,-1,0, 0,],
+                                    [0,1,0,1],
+                                    [0,0,0,0]
+                                    ])
+                                    ]
+        if self.NAME=="2generals":
+            self.REWARDS["generalsum"] = [np.array([[-2,-1],
+                                        [-10,-10],
+                                        [-11,-11],
+                                        [5,-15]
+                                        ]),
+                                        np.array([[-1,-1],
+                                        [-10,-10],
+                                        [0,0],
+                                        [15,-5]
+                                        ])]
+  
         
 
       

@@ -1,0 +1,16 @@
+horizon,gametype,SOTA,iterations,time,number_of_beliefs,leader values,follower values,density
+1,cooperative,Stackelberg,1,0.024214982986450195,4,-1.0,[-1. -1.],0.2
+1,cooperative,State of the Art,1,0.00011801719665527344,4,-1.0,[-1. -1.],0.2
+1,cooperative,Stackelberg,2,0.012609004974365234,4,-1.0,[-1. -1.],0.04
+1,cooperative,State of the Art,2,0.00012993812561035156,4,-1.0,[-1. -1.],0.04
+1,zerosum,Stackelberg,1,0.015141963958740234,4,-9.0625,[ 4.375 13.75 ],0.2
+1,zerosum,State of the Art,1,0.019301891326904297,4,-9.0625,[ 4.375 13.75 ],0.2
+1,zerosum,Stackelberg,2,0.016967058181762695,4,-9.0625,[ 4.375 13.75 ],0.04
+1,zerosum,State of the Art,2,0.018550872802734375,4,-9.0625,[ 4.375 13.75 ],0.04
+1,generalsum,Stackelberg,1,0.014188051223754883,4,-5.5,[0. 3.],0.2
+1,generalsum,State of the Art,1,0.01629495620727539,4,-5.5,[0. 3.],0.2
+1,generalsum,Stackelberg,2,0.01399993896484375,4,-5.5,[0. 3.],0.04
+1,generalsum,State of the Art,2,0.015452861785888672,4,-5.5,[0. 3.],0.04
+2,cooperative,Stackelberg,1,0.06535100936889648,4,0.06625000000000014,[ 2.335  -2.2025],0.2
+2,cooperative,State of the Art,1,0.0006501674652099609,4,0.06625000000000014,[ 2.335  -2.2025],0.2
+2,cooperative,Stackelberg,2,0.2002871036529541,6,0.06625000000000014,[ 2.335  -2.2025],0.04
