@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=100
-#SBATCH --time=45:00:00
+#SBATCH --cpus-per-task=80
+#SBATCH --time=30:00:00
 #SBATCH --error=error_file_broadcastChannel_densities.txt
 #SBATCH --job-name=broadcastChannel_densities
 #SBATCH --mem=25G

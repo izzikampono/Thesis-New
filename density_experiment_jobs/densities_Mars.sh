@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=125
+#SBATCH --cpus-per-task=100
 #SBATCH --time=48:00:00
 #SBATCH --error=error_file_Mars_densities.txt
 #SBATCH --job-name=Mars

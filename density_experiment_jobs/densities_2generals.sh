@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --cpus-per-task=100
+#SBATCH --cpus-per-task=80
 #SBATCH --time=24:00:00
 #SBATCH --error=error_file_2generals_densities.txt
 #SBATCH --job-name=2_generals_densities
