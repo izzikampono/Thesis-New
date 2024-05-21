@@ -125,7 +125,7 @@ class Experiment():
                 self.export_database(experiment_type="densities")
 
                 #add samples to the belief space for the next iteration
-                self.game.value_function.belief_space.add_samples(20)
+                self.game.value_function.belief_space.add_samples(50)
         
                 # store policy from last iteration
                 if iter == self.iterations-1 : self.policies[gametype][horizon][sota] = copy.deepcopy(self.game.value_function)
@@ -177,7 +177,7 @@ class Experiment():
 
             # construct stackelberg comparison matrix and export 
             self.construct_stackelberg_comparison_matrix(horizon)
-            
+
         # save databse as a csv file
         self.export_database(current_horizon=horizon)
         self.database = pd.DataFrame(self.database)
