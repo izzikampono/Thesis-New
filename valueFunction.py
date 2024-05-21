@@ -94,9 +94,12 @@ class ValueFunction:
                     # beta(x,u) = reward(x,u)
                     beta[agent][state][joint_action] = PROBLEM.REWARDS[self.gametype][agent][joint_action][state]
 
-                    # if statement for beta-vectors rooted at the last gamestage
-                    if timestep+1 >= self.horizon : 
-                        continue
+                    # if statement for beta-vectors rooted at the last gamestage that has no future reward approximation 
+                    if timestep+1 >= self.horizon : continue
+
+                    # if statement for blind follower 
+                    if (agent == PROBLEM.FOLLOWER and self.gametype=="generalsum" and self.sota==True): continue
+
                     for joint_observation in PROBLEM.JOINT_OBSERVATIONS:
 
                         #check for the resulting next belief id from the (U,Z) combination, if flag == True , then the algorithm found an existing belief in the belief space
